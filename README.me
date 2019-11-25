@@ -1,0 +1,52 @@
+
+
+To configure the PI
+
+Before starting then : $ sudo apt update
+$ sudo apt full-upgrade
+$ sudo apt autoremove
+$ sudo apt clean
+https://www.raspberrypi.org/documentation/raspbian/updating.md
+
+
+1) Configue hostname
+   $ sudo vi /etc/hostname
+   $ sudo vi /etc/hosts
+
+2) Enable remote connections
+
+From main menu->Preferences->Raspberry Pi Configuration
+
+In the configuration dialog select then Interfaces tab, then enable both SSH and VNC.
+
+3) Chanhge PI default screen resolution
+
+ Advanced Options > Resolution, and choose an option.
+
+hdmi_mode=85
+
+
+2) Samba
+
+First read: https://www.raspberrypi.org/documentation/remote-access/samba.md
+
+sudo apt install samba samba-common-bin
+
+sudo apt install samba samba-common-bin smbclient cifs-utils
+
+
+sudo systemctl restart smbd
+
+3) Downgrade to Java8
+The default is Java9 which does not run on on my model of PI, when attempting to run the the
+following error message is displayed "Server VM is only supported on ARMv7+ VFP"
+
+$ sudo apt remove openjdk-11-jre
+sudo apt remove --purge openjdk-11-jdk-headless
+ sudo apt remove --purge openjdk-11-jre-headless
+  
+$ sudo apt-get install openjdk-8-jre-headless openjdk-8-jre
+
+
+
+
