@@ -16,7 +16,7 @@ class CheckModemOutputSpecification extends Specification {
 		expect:
 			InputStream modemHtml = Thread.currentThread().getContextClassLoader()
 			    .getResourceAsStream( "me/ineson/monitorNbn/" + statusPage);
-			ModemStatus status = checker(modemHtml);
+			ModemStatus status = checker(modemHtml, "");
             status.connectionStatus == connectionStatus
 			status.accessType == accessType
 			status.connectionType == connectionType

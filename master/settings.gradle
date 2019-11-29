@@ -1,0 +1,6 @@
+
+rootProject.name = 'master'
+
+includeFlat 'modemStatus'
+//include 'bluewhale', 'krill'
+

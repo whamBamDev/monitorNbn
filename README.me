@@ -48,5 +48,26 @@ sudo apt remove --purge openjdk-11-jdk-headless
 $ sudo apt-get install openjdk-8-jre-headless openjdk-8-jre
 
 
+4) Install MongoDb
+
+$ sudo apt-get install mongodb
+
+
+5) Install nodeJs
+
+$ sudo apt autoremove
+$ sudo apt-get install nodejs npm
+
+
+
+
+7) 
+
+$ cromtab -e
+
+NBN_HOME=/home/pi/monitorNbn/share
+NBN_DATA=/home/pi/monitorNbn/share/output
+
+* * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date +\%Y\%m\%d`.dat 2>&1
 
 

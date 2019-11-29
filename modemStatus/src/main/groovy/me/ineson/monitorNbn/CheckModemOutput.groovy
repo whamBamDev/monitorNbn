@@ -8,12 +8,12 @@ import org.jsoup.select.Elements
 
 class CheckModemOutput {
 
-	static def ModemStatus parseHtml( InputStream html) {
+	static def ModemStatus parseHtml( InputStream html, String url) {
 		ModemStatus status = new ModemStatus();
 		ModemLeds leds = new ModemLeds();
 		status.leds = leds;
 				
-		Document document = Jsoup.parse(html, "UTF-8", "http://192.168.0.1/");
+		Document document = Jsoup.parse(html, "UTF-8", url);
 	
         Elements links = document.getElementsByTag("h4");
 		for (Element link : links) {

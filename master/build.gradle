@@ -1,0 +1,26 @@
+allprojects {
+    apply plugin: 'java'
+    group = 'me.ineson.monitorNbn'
+    version = '1.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+/*
+subprojects {
+    apply plugin: 'war'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        implementation "javax.servlet:servlet-api:2.5"
+    }
+}
+*/
+
+
+
+
+
