@@ -1,8 +1,11 @@
-package me.ineson.monitorNbn;
+package me.ineson.monitorNbn.modemStatus;
 
-import static me.ineson.monitorNbn.CheckModemOutput.parseHtml as checker
-import me.ineson.monitorNbn.ModemStatus
+import static me.ineson.monitorNbn.modemStatus.CheckModemOutput.parseHtml as checker
+
 import java.io.InputStream
+
+import groovy.transform.CompileStatic
+import me.ineson.monitorNbn.modemStatus.ModemStatus
 import spock.lang.*
 
 class CheckModemOutputSpecification extends Specification {
@@ -15,7 +18,7 @@ class CheckModemOutputSpecification extends Specification {
 		// blocks go here
 		expect:
 			InputStream modemHtml = Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream( "me/ineson/monitorNbn/" + statusPage);
+			    .getResourceAsStream( "me/ineson/monitorNbn/modemStatus/" + statusPage);
 			ModemStatus status = checker(modemHtml, "");
             status.connectionStatus == connectionStatus
 			status.accessType == accessType

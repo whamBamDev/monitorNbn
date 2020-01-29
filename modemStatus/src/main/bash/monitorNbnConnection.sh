@@ -31,7 +31,7 @@ echo ""
 
 time_now=$(date +"%d-%m-%Y %T")
 echo "== Modem Status: ${time_now}"
-/home/pi/monitorNbn/share/monitorNbn-1.0/bin/monitorNbn
+/home/pi/monitorNbn/share/modemStatus-001/bin/modemStatus
 echo "Exit Code: $?"
 echo ""
 time_now=$(date +"%d-%m-%Y %T")

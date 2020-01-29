@@ -1,8 +1,9 @@
-package me.ineson.monitorNbn
+package me.ineson.monitorNbn.modemStatus
 
+import groovy.transform.CompileStatic
 import groovy.transform.ToString
 
-@ToString
+@CompileStatic
 class ModemStatus {
 
 	public ModemStatus() {

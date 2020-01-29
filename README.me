@@ -41,11 +41,23 @@ sudo systemctl restart smbd
 The default is Java9 which does not run on on my model of PI, when attempting to run the the
 following error message is displayed "Server VM is only supported on ARMv7+ VFP"
 
-$ sudo apt remove openjdk-11-jre
-sudo apt remove --purge openjdk-11-jdk-headless
- sudo apt remove --purge openjdk-11-jre-headless
-  
-$ sudo apt-get install openjdk-8-jre-headless openjdk-8-jre
+
+$ sudo apt-get remove openjdk*
+$ sudo apt-get autoremove
+$ tar -xvf jdk-8u231-linux-arm32-vfp-hflt.tar.gz
+
+$ sudo update-alternatives --install /usr/bin/java java /home/pi/Apps/java/jdk1.8.0_231/bin/java 1
+$ sudo update-alternatives --set java /home/pi/Apps/java/jdk1.8.0_231/bin/java
+
+export JAVA_HOME="/home/pi/Apps/java/jdk1.8.0_231"
+export PATH="$JAVA_HOME/bin:$PATH"
+
+
+$ sudo update-alternatives --install /usr/bin/java java /home/pi/Apps/java/jdk1.8.0_231/bin/java 1
+$ sudo update-alternatives --set java /home/pi/Apps/java/jdk1.8.0_231/bin/java
+
+
+jdk1.8.0_231
 
 
 4) Install MongoDb

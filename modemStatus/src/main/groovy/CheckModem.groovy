@@ -1,7 +1,9 @@
-import static me.ineson.monitorNbn.CheckModemOutput.parseHtml as checkModem
-import me.ineson.monitorNbn.ModemStatus
+import static me.ineson.monitorNbn.modemStatus.CheckModemOutput.parseHtml as checkModem
+
 import java.io.InputStream
 import java.net.URL
+
+import me.ineson.monitorNbn.modemStatus.ModemStatus
 
 try {
 	String modemUrl = "http://192.168.0.1/";

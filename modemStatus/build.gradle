@@ -11,7 +11,7 @@ repositories {
 }
 
 group 'me.ineson.monitorNbn'
-version '1.0'
+version '001'
 
 dependencies {
     implementation 'org.codehaus.groovy:groovy-all:2.5.8'

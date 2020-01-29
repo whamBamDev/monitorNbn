@@ -1,11 +1,15 @@
-package me.ineson.monitorNbn
+package me.ineson.monitorNbn.modemStatus
 
-import static me.ineson.monitorNbn.ModemLeds.PHONE_SOS
+import static me.ineson.monitorNbn.modemStatus.ModemLeds.PHONE_SOS
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class CheckModemOutput {
 
 	static def ModemStatus parseHtml( InputStream html, String url) {
