@@ -1,0 +1,267 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require_relative 'localConfig.rb'
+include LOCAL_CONFIG
+hostDevDir = HOST_DEV_DIR
+
+javaVersion = "8u241"
+#javaVersionBuild = "#{javaVersion}-b13"
+#javaVersionId = "96a7b8442fe848ef90c96a2fad6ed6d1"
+javaRpm = "jdk-#{javaVersion}-linux-x64.rpm"
+
+homeDir = "/home/vagrant"
+localDir = "/usr/local"
+downloadDir = "#{homeDir}/installDownload"
+bashProfileFile = "#{homeDir}/.bashrc"
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  #config.vm.box = "bento/centos-7.3"
+  config.vm.box = "centos/7"
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network "private_network", ip: "192.170.1.6"
+  config.vm.network "forwarded_port", guest: 22, host: 2226
+
+  config.ssh.forward_agent=true
+  config.ssh.forward_x11=true
+  
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+#  config.vm.synced_folder "D:/Dev/Demo/git", "/home/vagrant/git", type: "virtualbox"
+  config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}"
+  config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share"
+  config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+   config.vm.provider "virtualbox" do |vb|
+     vb.name = "monitorNbnDevBox"
+     # Display the VirtualBox GUI when booting the machine
+     vb.gui = true
+  
+     # Customize the amount of memory on the VM:
+    vb.memory = "6144"
+    vb.cpus = 4
+    vb.customize ["modifyvm", :id, "--vram", "64"]
+    vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+	
+    #vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/home/vagrant/waterTank", "1"]
+  end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
+  # such as FTP and Heroku are also available. See the documentation at
+  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
+  # config.push.define "atlas" do |push|
+  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
+  # end
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   sudo apt-get update
+  #   sudo apt-get install -y apache2
+  # SHELL
+  
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum -y install deltarpm
+    sudo yum -y update
+    sudo yum install zlib.i686 ncurses-libs.i686 bzip2-libs.i686
+    sudo yum install -y augeas
+    sudo yum install xorg-x11-xauth
+    sudo yum -y groupinstall "GNOME Desktop"
+    sudo rpm -e initial-setup initial-setup-gui    
+    sudo systemctl set-default graphical.target
+    sudo systemctl start graphical.target
+    sudo yum -y install xterm
+    sudo yum -y install xclock
+	sudo yum -y install dconf-editor
+	sudo yum -y install git
+  SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Configure user and desktop settings."
+	sudo timedatectl set-timezone Australia/Sydney
+    # Set screen lockout to 1 hour
+    sudo -u vagrant dbus-launch gsettings set org.gnome.desktop.session idle-delay 3600
+    # Set font and icon sizes
+	sudo -u vagrant dbus-launch gsettings set org.gnome.desktop.interface text-scaling-factor 0.75
+    sudo -u vagrant dbus-launch gsettings set org.gnome.nautilus.icon-view default-zoom-level small	
+	sudo gsettings set org.gnome.nautilus.icon-view default-zoom-level small
+	#sudo -u vagrant dbus-launch gsettings set org.gnome.desktop.interface toolbar-icons-size small
+	#xset s off
+    #xset s noblank
+  SHELL
+#[vagrant@localhost ~]$ gsettings set org.gnome.desktop.session idle-delay 0
+#[vagrant@localhost ~]$ gsettings get org.gnome.desktop.screensaver lock-enabled
+#true
+
+  
+  
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Installing KVM"
+    sudo yum -y install qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer bridge-utils
+	systemctl start libvirtd
+    systemctl enable libvirtd
+  SHELL
+  
+  # Configure autologin as the vagrant user.
+  config.vm.provision "shell", path: "configUser.sh"
+
+  # Is a restart required?
+  
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Removing OpenJDK"
+    rpm -qa | grep "openjdk" | while read line ; do echo "- removing Java $line"; sudo yum -y erase $line ; done
+  SHELL
+
+  
+  # Install Java - Oracle Version
+  config.vm.provision "shell", inline: <<-SHELL
+    if ! [[ $(rpm -qa | grep 'jdk[0-9]') = jdk* ]]; then
+      echo "Installing Oracle Java"
+	  cd "#{downloadDir}"
+	  ls -l
+      if [ ! -f "#{javaRpm}" ]; then
+      echo "Note wget download no longer works, need to manually download JDK from oracle now."
+          set -e
+#	      wget -O "#{javaRpm}" -c --content-disposition "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=241523_1f5b5a70bf22433b84d0e960903adac8"
+	  fi
+	  ls -l *.rpm
+      sudo yum localinstall -y "#{javaRpm}"
+#      sudo yum localinstall -y "jdk-#{javaVersion}-linux-x64.rpm"
+#      rm jdk-*.rpm*
+	else
+      echo "Skipped Oracle Java - already installed"
+    fi
+  SHELL
+
+  epelRpm = "epel-release-latest-7.noarch.rpm"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Add epel"
+    cd "#{downloadDir}"
+	ls -l
+    if [ ! -f "#{epelRpm}" ]; then
+      wget --quiet http://dl.fedoraproject.org/pub/epel/#{epelRpm}
+    fi
+      sudo rpm -ivh #{epelRpm}
+    ls -l *.rpm
+	sudo yum repolist
+  SHELL
+  
+  # Install sdkman which is required for groovy and gradle.
+  config.vm.provision "shell", inline: <<-SHELL
+    if [ ! -d /usr/local/sdkman ]; then
+      export SDKMAN_DIR="/usr/local/sdkman" && curl -s get.sdkman.io | bash
+	fi
+  SHELL
+
+  # Install groovy, gradle and maven.
+  config.vm.provision "shell", inline: <<-SHELL
+	export SDKMAN_DIR="/usr/local/sdkman"
+    source "/usr/local/sdkman/bin/sdkman-init.sh"
+    echo "sdkman_auto_answer=true" >> /usr/local/sdkman/etc/config
+    if [ ! -f /etc/profile.d/groovy.sh ]; then
+      echo "Install Groovy"
+	  sdk install groovy > /dev/null
+      echo "export GROOVY_HOME=/usr/local/sdkman/candidates/groovy/current" > /etc/profile.d/groovy.sh
+      echo "export PATH=\\$PATH:\\$GROOVY_HOME/bin" >> /etc/profile.d/groovy.sh
+      chmod +rx /etc/profile.d/groovy.sh
+	fi
+    groovy -v
+
+    if [ ! -f /etc/profile.d/gradle.sh ]; then
+      echo "Install Gradle"
+      sdk install gradle > /dev/null
+      echo "export GRADLE_HOME=/usr/local/sdkman/candidates/gradle/current" > /etc/profile.d/gradle.sh
+      echo "export PATH=\\$PATH:\\$GRADLE_HOME/bin" >> /etc/profile.d/gradle.sh
+      chmod +rx /etc/profile.d/gradle.sh
+	fi
+    gradle -v
+  SHELL
+
+desktopFilename = "#{homeDir}/Desktop/Spring Tool Suite.desktop"
+#desktopFilename = "#{homeDir}/.local/share/applications/Spring Tool Suite.desktop"
+
+stsVersion = "sts-4.5.1.RELEASE"
+stsTar = "spring-tool-suite-4-4.5.1.RELEASE-e4.14.0-linux.gtk.x86_64.tar.gz"
+
+
+  config.vm.provision "shell", inline: <<-SHELL
+    mkdir -p "#{homeDir}/monitorNbn/workspace"
+    chown -R vagrant:vagrant "#{homeDir}/monitorNbn/workspace"
+    mkdir -p "#{homeDir}/Apps/eclipse"
+
+    if [ ! -d "#{homeDir}/Apps/eclipse/#{stsVersion}" ]; then
+      echo "Download Spring STS"
+      cd "#{homeDir}/Apps/eclipse"
+	  ls -l
+      if [ ! -f "#{stsTar}" ]; then
+        wget --quiet --no-cookies --no-check-certificate "https://download.springsource.com/release/STS4/4.5.1.RELEASE/dist/e4.14/spring-tool-suite-4-4.5.1.RELEASE-e4.14.0-linux.gtk.x86_64.tar.gz"
+	  fi
+      ls -l *.gz
+      tar -xvf #{stsTar}
+
+	  chown -R vagrant:vagrant "#{homeDir}/Apps/eclipse"
+	fi
+
+
+    if [ ! -f "#{desktopFilename}" ]; then
+##	  mkdir -p #{homeDir}/.local/share/applications
+      echo "Adding Spring STS icon"
+      echo "[Desktop Entry]" > "#{desktopFilename}"
+      echo "Type=Application" >> "#{desktopFilename}"
+      echo "Name=Eclipse STS" >> "#{desktopFilename}"
+      echo "Comment=Eclipse Soring STS Integrated Development Environment" >> "#{desktopFilename}"
+#      echo "Icon=/usr/local/android-studio/bin/studio.png" >> "#{desktopFilename}"
+      echo "Exec=\"/#{homeDir}/Apps/eclipse/#{stsVersion}/SpringToolSuite4\" -data #{homeDir}/monitorNbn/workspace %f" >> "#{desktopFilename}"
+      echo "Categories=Development;IDE;Spring;Eclipse;" >> "#{desktopFilename}"
+      echo "Terminal=false" >> "#{desktopFilename}"
+	
+	  chown -R vagrant:vagrant #{homeDir}/.local
+	  chmod +x "#{desktopFilename}"
+	  chown vagrant:vagrant "#{desktopFilename}"
+	
+# TODO: source ~/.bash_profile
+	fi
+  SHELL
+
+  
+end

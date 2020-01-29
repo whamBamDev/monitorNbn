@@ -1,0 +1,35 @@
+
+require_relative 'localConfig.rb'
+include LOCAL_CONFIG
+hostDevDir = HOST_DEV_DIR
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "Bassualdo/raspberryDesktop"
+  config.vm.box_version = "1.0.0"
+  
+  config.vm.network "private_network", ip: "192.170.1.5"
+  config.vm.network "forwarded_port", guest: 22, host: 2225, id: "ssh", auto_correct: true
+
+  config.vm.boot_timeout = 600
+
+  config.vm.synced_folder "#{hostDevDir}/share", "/home/pi/monitorNbn/share"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "RaspberryPi"
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = true
+  
+    # Customize the amount of memory on the VM:
+    vb.memory = "2048"
+    vb.cpus = 4
+    vb.customize ["modifyvm", :id, "--vram", "16"]
+    vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+  end
+
+# sudo mount -t vboxsf -o uid=1000,gid=1000 share ~/host
+# sudo mount -t vboxsf -o uid=1000,gid=1000 share /home/pi/monitorNbn/share
+  
+end
+
+

@@ -1,0 +1,5 @@
+module LOCAL_CONFIG
+
+    HOST_DEV_DIR = 'c:/dir'
+
+end

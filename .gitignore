@@ -8,3 +8,6 @@
 **/.project
 **/.settings
 
+# Vagrant files
+**/localConfig.rb
+**/.vagrant
