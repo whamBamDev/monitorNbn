@@ -83,3 +83,31 @@ NBN_DATA=/home/pi/monitorNbn/share/output
 * * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date +\%Y\%m\%d`.dat 2>&1
 
 
+
+Configure Develpoment Environment
+
+1) Install the following;
+Virtual Box
+Vagrant
+
+2) checkout code from https://github.com/whamBamDev/monitorNbn.git to under a local folder, e.g. D:\Dev\monitorNbn (the code cloned out to folder "D:\Dev\monitorNbn\monitorNbn".
+
+3) Install vagrant plugin vbguest 
+$ vagrant plugin install vagrant-vbguest
+
+4) Under D:\Dev\monitorNbn\monitorNbn\vagrantDevBox copy file localConfig.rb.example to localConfig.rb.
+Edit and update the directory parameter to development area.
+   HOST_DEV_DIR = 'D:/Dev/monitorNbn'
+
+5) Create the following folders;
+D:\Dev\monitorNbn\installDownload
+D:\Dev\monitorNbn\share
+
+6) Download Oracle JDK version 8u241 (Linux x64 RPM - filebname jdk-8u241-linux-x64.rpm) and put under 
+D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to download Java8 using from within a vagrant script 
+(using wget).
+
+7) Then create the VM
+vagrant up
+
+

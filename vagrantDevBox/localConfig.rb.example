@@ -1,5 +1,6 @@
 module LOCAL_CONFIG
 
     HOST_DEV_DIR = 'c:/dir'
+    MONITOR_COUNT = '2'
 
 end

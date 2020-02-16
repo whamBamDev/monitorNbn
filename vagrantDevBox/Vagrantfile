@@ -4,6 +4,7 @@
 require_relative 'localConfig.rb'
 include LOCAL_CONFIG
 hostDevDir = HOST_DEV_DIR
+monitorCount = MONITOR_COUNT
 
 javaVersion = "8u241"
 #javaVersionBuild = "#{javaVersion}-b13"
@@ -57,23 +58,28 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
 #  config.vm.synced_folder "D:/Dev/Demo/git", "/home/vagrant/git", type: "virtualbox"
-  config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}"
-  config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share"
-  config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn"
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}", type: "virtualbox", automount: true
+  config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share", type: "virtualbox", automount: true
+  config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn", type: "virtualbox", automount: true
+  #config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}", type: "virtualbox", automount: true
+  #config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share", type: "virtualbox", automount: true
+  #config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn", type: "virtualbox", automount: true
+  #config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-   config.vm.provider "virtualbox" do |vb|
-     vb.name = "monitorNbnDevBox"
-     # Display the VirtualBox GUI when booting the machine
-     vb.gui = true
-  
-     # Customize the amount of memory on the VM:
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "monitorNbnDevBox"
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = true
+    vb.customize ["modifyvm", :id, "--monitorcount", "#{monitorCount}"]  
+
+    # Customize the amount of memory on the VM:
     vb.memory = "6144"
     vb.cpus = 4
+	
     vb.customize ["modifyvm", :id, "--vram", "64"]
     vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
     vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
@@ -123,7 +129,7 @@ Vagrant.configure(2) do |config|
     # Set font and icon sizes
 	sudo -u vagrant dbus-launch gsettings set org.gnome.desktop.interface text-scaling-factor 0.75
     sudo -u vagrant dbus-launch gsettings set org.gnome.nautilus.icon-view default-zoom-level small	
-	sudo -u vagrant gsettings set org.gnome.nautilus.icon-view default-zoom-level small
+	sudo -u vagrant dbus-launch gsettings set org.gnome.nautilus.icon-view default-zoom-level small
 	#sudo -u vagrant dbus-launch gsettings set org.gnome.desktop.interface toolbar-icons-size small
 	#xset s off
     #xset s noblank
