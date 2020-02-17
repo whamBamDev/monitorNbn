@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
   #config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}", type: "virtualbox", automount: true
   #config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share", type: "virtualbox", automount: true
   #config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn", type: "virtualbox", automount: true
-  #config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -81,7 +81,7 @@ Vagrant.configure(2) do |config|
     vb.cpus = 4
 	
     vb.customize ["modifyvm", :id, "--vram", "64"]
-    vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    vb.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
     vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
 	
     #vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/home/vagrant/waterTank", "1"]
