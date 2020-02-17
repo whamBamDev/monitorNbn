@@ -58,9 +58,9 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
 #  config.vm.synced_folder "D:/Dev/Demo/git", "/home/vagrant/git", type: "virtualbox"
-  config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}", type: "virtualbox", automount: true
-  config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share", type: "virtualbox", automount: true
-  config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn", type: "virtualbox", automount: true
+  config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}", type: "virtualbox"
+  config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share", type: "virtualbox"
+  config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn", type: "virtualbox"
   #config.vm.synced_folder "#{hostDevDir}/installDownload", "#{downloadDir}", type: "virtualbox", automount: true
   #config.vm.synced_folder "#{hostDevDir}/share", "#{homeDir}/monitorNbn/share", type: "virtualbox", automount: true
   #config.vm.synced_folder "#{hostDevDir}/monitorNbn", "#{homeDir}/monitorNbn/monitorNbn", type: "virtualbox", automount: true
@@ -263,8 +263,8 @@ stsTar = "spring-tool-suite-4-4.5.1.RELEASE-e4.14.0-linux.gtk.x86_64.tar.gz"
 	
 	  chown -R vagrant:vagrant #{homeDir}/.local
 	  chmod +x "#{desktopFilename}"
-	  chown vagrant:vagrant "#{desktopFilename}"
-	
+	  chown vagrant:vagrant 
+	  sudo -u vagrant gio set "#{desktopFilename}" "metadata::trusted" true
 # TODO: source ~/.bash_profile
 	fi
   SHELL
