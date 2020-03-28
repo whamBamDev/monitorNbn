@@ -3,6 +3,7 @@
  */
 package me.ineson.monitorNbn.dataLoader;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Objects;
  * @author peter
  *
  */
-public class FileReader {
+public class FileReader implements Closeable {
 
 	private RandomAccessFile file;
 
@@ -60,7 +61,15 @@ public class FileReader {
 		
 		return testSection;
 	}
-	
+
+	public void close() throws IOException {
+		if( file != null) {
+		    RandomAccessFile temp = file;
+		    file = null;
+		    temp.close();
+		}
+	}
+
 	
     static boolean isStartOfTestBlock( String line) {
 		return ! Objects.isNull(line) && line.startsWith("==== start"); 
