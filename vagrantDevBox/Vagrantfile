@@ -263,7 +263,7 @@ stsTar = "spring-tool-suite-4-4.5.1.RELEASE-e4.14.0-linux.gtk.x86_64.tar.gz"
 	
 	  chown -R vagrant:vagrant #{homeDir}/.local
 	  chmod +x "#{desktopFilename}"
-	  chown vagrant:vagrant 
+	  chown vagrant:vagrant "#{desktopFilename}"
 	  sudo -u vagrant gio set "#{desktopFilename}" "metadata::trusted" true
 # TODO: source ~/.bash_profile
 	fi
