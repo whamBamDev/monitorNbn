@@ -6,9 +6,14 @@ plugins {
     id 'application'
 }
 
+ext.junitVersion = '5.6.2'
+ext.mongodbVersion = '4.0.3'
+
 repositories {
-   mavenCentral()
+    mavenCentral()
+    maven { url 'http://repo.springsource.org/release' }
 }
+
 
 group 'me.ineson.monitorNbn'
 version '1.0'
@@ -18,18 +23,32 @@ dependencies {
     implementation 'commons-cli:commons-cli:1.4'
     implementation 'org.apache.commons:commons-collections4:4.4'
     implementation 'org.apache.commons:commons-lang3:3.10'
-	implementation 'org.mongodb:mongo-java-driver:3.11.2'
 	implementation 'org.apache.logging.log4j:log4j-api:2.13.0'
 	implementation 'org.apache.logging.log4j:log4j-core:2.13.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.10.2'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.2'
+
+	implementation "org.mongodb:mongodb-driver-sync:${mongodbVersion}"
+	implementation "org.mongodb:mongodb-driver-legacy:${mongodbVersion}"
 	
-    testImplementation "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${junitVersion}")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+	
+    testImplementation "org.spockframework:spock-core:1.2-groovy-2.5"
+	testImplementation "org.springframework.boot:spring-boot-starter-data-mongodb:2.3.0.RELEASE"
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0'
+	testImplementation 'org.springframework:spring-context:5.2.6.RELEASE'
+	testImplementation( 'org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
 }
 
-
 test {
- finalizedBy jacocoTestReport
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {

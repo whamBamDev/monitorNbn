@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
  */
 public abstract class AbstractTestVerifier {
 
-    private static final Logger log = LogManager.getLogger(AbstractTestVerifier.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractTestVerifier.class);
     
     private static final Map<String, AbstractTestVerifier> VERIFIERS = createVerifiers();
 
@@ -91,7 +91,7 @@ public abstract class AbstractTestVerifier {
 		}
 		
 		String version = versionMatcher.group(1);
-		log.debug("Got version {} from line: {}", version, firstLine);
+		LOG.debug("Got version {} from line: {}", version, firstLine);
 		
 		AbstractTestVerifier verifier = VERIFIERS.get(version);
 		if( Objects.isNull(verifier)) {

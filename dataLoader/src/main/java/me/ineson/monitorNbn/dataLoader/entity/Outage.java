@@ -2,11 +2,11 @@ package me.ineson.monitorNbn.dataLoader.entity;
 
 import java.time.LocalDateTime;
 
-public class Outage {
+public class Outage extends BaseEntity {
 
     private LocalDateTime startTime;
 
-    private LocalDateTime endTime;
+	private LocalDateTime endTime;
     
     private Long startFilePosition;
     
@@ -44,4 +44,17 @@ public class Outage {
 		this.numberOfLines = numberOfLines;
     }
 
+	
+    @Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Outage [id=").append(getId())
+				.append(", startTime=").append(startTime)
+				.append(", endTime=").append(endTime)
+				.append(", startFilePosition=").append(startFilePosition)
+				.append(", numberOfLines=").append(numberOfLines)
+				.append("]");
+		return builder.toString();
+	}
+	
 }

@@ -2,11 +2,12 @@ package me.ineson.monitorNbn.dataLoader.entity;
 
 import java.time.LocalDate;
 
-public class DailySummary {
+
+public final class DailySummary extends BaseEntity {
 	
-    private LocalDate date;
+	private LocalDate date;
     
-    private String datafile;
+	private String datafile;
     
     private Integer outageCount;
 
@@ -34,5 +35,15 @@ public class DailySummary {
 		this.outageCount = outageCount;
 	}
     
+    @Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DailySummary [id=").append(getId())
+			.append(", date=").append(date)
+			.append(", datafile=").append(datafile)
+			.append(", outageCount=").append(outageCount)
+			.append("]");
+		return builder.toString();
+	}
 
 }
