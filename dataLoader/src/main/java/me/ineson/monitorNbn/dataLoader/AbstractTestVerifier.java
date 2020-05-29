@@ -3,7 +3,9 @@
  */
 package me.ineson.monitorNbn.dataLoader;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,10 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.plaf.synth.Region;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,14 +33,35 @@ public abstract class AbstractTestVerifier {
 
     // echo "==== start(001): 03-12-2019 00:55:29" 
 
-	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+	private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
 	private static final String DATETIME_FORMAT = "\\d{1,2}-\\d{1,2}-\\d{2,4} \\d{1,2}\\:\\d{1,2}\\:\\d{1,2}";
 
-	private static final Pattern START_LINE = Pattern.compile("==== start\\((\\d*)\\): (" + DATETIME_FORMAT + ")");
-	
-	private static final Pattern END_LINE = Pattern.compile("==== end: (" + DATETIME_FORMAT + ")");
+	protected static final Pattern START_LINE = Pattern.compile("==== start\\((\\d*)\\): (" + DATETIME_FORMAT + ")");
 
+	protected static final int START_LINE_DATE_POS = 1;
+
+	protected static final Pattern END_LINE = Pattern.compile("==== end: (" + DATETIME_FORMAT + ")");
+
+	protected static final int END_LINE_DATE_POS = 0;
+
+	protected static final String START_TEST = "== ";
+
+	protected static final String END_TEST = "Exit Code:";
+
+	protected static final String TEST_SUCCESS = "Exit Code: 0";
+
+	protected static final String TEST_TRACEROUTE_SUCCESS = "<syn,ack>";
+
+	protected static final String TEST_PING_SUCCESS = "0% packet loss";
+
+	protected static final String TEST_TRACEROUTE_IP = "== traceroute - IP";
+	
+	protected static final String TEST_TRACEROUTE_DNS = "== traceroute - DNS Lookup";
+
+	protected static final String TEST_PING = "== ping - DNS Lookup";
+	
+	protected static final String TEST_MODEN_STATUS = "== Modem Status";
 	
 //	== traceroute - direct IP: 03-12-2019 00:56:01
 //  == traceroute - DNS Lookup: 03-12-2019 00:56:03
@@ -81,5 +107,15 @@ public abstract class AbstractTestVerifier {
 	}
 
 	public abstract TestSectionOutcome getTestOutcome( TestSection testSection);
+
 	
+	protected static LocalDateTime parseDate(Matcher matcher, int dateField) {
+		String stringDateTime = matcher.group(dateField);
+		if( StringUtils.isNotBlank(stringDateTime)) {
+			return LocalDateTime.parse(stringDateTime, DATETIME_FORMATTER);
+		}
+		
+		return null;
+	}
+
 }
