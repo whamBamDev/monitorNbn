@@ -13,6 +13,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Sorts;
 
@@ -26,9 +27,9 @@ public class OutageDao {
 
     private static final Logger LOG = LogManager.getLogger(OutageDao.class);
 
-    private final static String COLLECTION_NAME = Outage.class.getSimpleName();;
+    final static String COLLECTION_NAME = Outage.class.getSimpleName();;
 
-    private final static String KEY_FIELD = "startTime";
+    final static String KEY_FIELD = "startTime";
 
     private MongoDatabase mongoDatabase;
 
@@ -50,7 +51,7 @@ public class OutageDao {
 		}
         if( addIndex) {
         	LOG.info("Adding an index on the {} field on {} document", KEY_FIELD, COLLECTION_NAME);
-        	collection.createIndex(Indexes.descending(KEY_FIELD));
+        	collection.createIndex(Indexes.descending(KEY_FIELD),new IndexOptions().unique(true));
         }
 	}
 
@@ -64,6 +65,13 @@ public class OutageDao {
 		return createCollection()
 				.deleteMany(Filters.and(Filters.gte(KEY_FIELD, startTime), Filters.lt(KEY_FIELD, startTime.plusDays(1L))))
 				.getDeletedCount();
+	}
+
+	public long deleteAll() {
+		MongoCollection<Outage>collection = createCollection(); 
+		long count = collection.countDocuments();
+		collection.drop();
+		return count;
 	}
 
 	public Iterable<Outage> findByDate(LocalDate date) {

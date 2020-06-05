@@ -6,6 +6,8 @@ package me.ineson.monitorNbn.dataLoader.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.util.Iterator;
@@ -15,9 +17,9 @@ import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,6 @@ class DailySummaryDaoTest {
     	mongoTemplate.dropCollection(DailySummaryDao.COLLECTION_NAME);
         listDbContents("Before", mongoTemplate);
         datasourceManager = new DatasourceManager(dbUrl, dbName);
-//        dao = new OutageDao(mongoTemplate.getDb());
         dao = new DailySummaryDao(datasourceManager.getDatabase());
     }
 
@@ -165,5 +166,135 @@ class DailySummaryDaoTest {
         listDbContents("post test", mongoTemplate);
     }
 
+
+    @Test
+    @DisplayName("Test findByDate success")
+    void testFindByDateSuccess() {
+
+        // Given: Save a couple of record on different dates.
+        DailySummary dailySummary = new DailySummary();
+        final LocalDate date = LocalDate.now();
+        dailySummary.setDate(date);
+        dailySummary.setDatafile("test/file.todate.date");
+        dailySummary.setOutageCount(4);
+        dao.add(dailySummary);
+
+        dailySummary = new DailySummary();
+        dailySummary.setDate(date.minusDays(1));
+        dailySummary.setDatafile("test2/file.todate.date");
+        dailySummary.setOutageCount(2);
+        dao.add(dailySummary);
+
+        // When: Find by the date of the first saved record.
+        DailySummary searchResult = dao.findByDate(date);
+
+        // Then: Just one record is returned
+        assertNotNull(searchResult);
+
+        //     and the return record is the first one that was saved.
+        LOG.debug("returnedOutage: {}", searchResult);
+        assertEquals(Integer.valueOf(4), searchResult.getOutageCount());
+    }
+
+    @Test
+    @DisplayName("Test findByDate not found")
+    void testFindByDateNotFound() {
+
+        // Given: Save a record.
+        DailySummary dailySummary = new DailySummary();
+        final LocalDate date = LocalDate.now();
+        dailySummary.setDate(date);
+        dailySummary.setDatafile("test/file.todate.date");
+        dailySummary.setOutageCount(4);
+        dao.add(dailySummary);
+
+        // When: Find by the date one day prior to the saved record.
+        DailySummary searchResult = dao.findByDate(date.minusDays(1));
+
+        // Then: Record not found.
+        assertNull(searchResult);
+    }
+
+    @Test
+    @DisplayName("Test deleteByDate success")
+    void testDeleteByDateSuccess() {
+
+        // Given: Save a couple of record on different dates.
+        DailySummary dailySummary = new DailySummary();
+        final LocalDate date = LocalDate.now();
+        dailySummary.setDate(date);
+        dailySummary.setDatafile("test/file.todate.date");
+        dailySummary.setOutageCount(4);
+        dao.add(dailySummary);
+
+        dailySummary = new DailySummary();
+        dailySummary.setDate(date.minusDays(1));
+        dailySummary.setDatafile("test/file2.todate.date2");
+        dailySummary.setOutageCount(1);
+        dao.add(dailySummary);
+
+        // When: Find by the date of the first saved record.
+        long deleteCount = dao.delete(date);
+
+        // Then: Just one record is deleted
+        assertEquals(1L, deleteCount);
+
+        // and the second saved record has not been deleted.
+        Iterable<DailySummary> searchResults = dao.findAll();
+        assertNotNull(searchResults);
+        Iterator<DailySummary> searchResultsIterator = searchResults.iterator();
+        DailySummary returnedRecord = searchResultsIterator.next();
+        assertNotNull(returnedRecord);
+        assertFalse("Has more than one result", searchResultsIterator.hasNext());
+        assertEquals(Integer.valueOf(1), returnedRecord.getOutageCount());
+    }
+
+    @Test
+    @DisplayName("Test findByDate not found")
+    void testDeleteByDateNotFound() {
+
+        // Given: Save a record.
+        DailySummary dailySummary = new DailySummary();
+        final LocalDate date = LocalDate.now();
+        dailySummary.setDate(date);
+        dailySummary.setDatafile("test/file.todate.date");
+        dailySummary.setOutageCount(4);
+        dao.add(dailySummary);
+
+        // When: Find by the date one day prior to the saved record.
+        long deleteCount = dao.delete(date.minusDays(1));
+
+        // Then: Just one record is deleted
+        assertEquals(0L, deleteCount);
+
+        // Then: The saved record is found.
+        Iterable<DailySummary> searchResults = dao.findAll();
+        assertNotNull(searchResults);
+        assertTrue("Has a result", searchResults.iterator().hasNext());
+    }
+
+	@Test
+	@DisplayName("Test deleteAll success")
+	void testDeleteAllSuccess() {
+
+        // Given: Save a record.
+        DailySummary dailySummary = new DailySummary();
+        final LocalDate date = LocalDate.now();
+        dailySummary.setDate(date);
+        dailySummary.setDatafile("test/file.todate.date");
+        dailySummary.setOutageCount(4);
+        dao.add(dailySummary);
+
+        // When: Find by the date one day prior to the saved record.
+        long deleteCount = dao.deleteAll();
+
+        // Then: Just one record is deleted
+        assertEquals(1L, deleteCount);
+
+        // Then: The saved record is found.
+        Iterable<DailySummary> searchResults = dao.findAll();
+        assertNotNull(searchResults);
+        assertFalse("No results are found", searchResults.iterator().hasNext());
+	}
 
 }
