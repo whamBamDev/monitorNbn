@@ -111,11 +111,50 @@ class OutageDaoTest {
         Outage returnedOutage = searchResultsIterator.next();
         assertNotNull(returnedOutage);
         assertFalse("Has more than one result", searchResultsIterator.hasNext());
-        LOG.info("returnedOutage: {}", returnedOutage);
+        LOG.debug("returnedOutage: {}", returnedOutage);
         assertEquals(Long.valueOf(12345L), returnedOutage.getStartFilePosition());
         assertEquals(Integer.valueOf(25), returnedOutage.getNumberOfLines());
         assertEquals(startTime, returnedOutage.getStartTime());
         assertEquals(endTime, returnedOutage.getEndTime());
+    }
+    
+    @Test
+    @DisplayName("test update success")
+    void testUpdateSuccess() {
+        // Given: record seaved
+        Outage outage = new Outage();
+
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = startTime.plusHours(1);
+
+        outage.setNumberOfLines(25);
+        outage.setStartFilePosition(12345L);
+        outage.setStartTime(startTime);
+        outage.setEndTime(endTime);
+
+        Outage newRecord = dao.add(outage);
+
+        // When: change the number of lines and update
+        newRecord.setNumberOfLines(512);
+        long count = dao.update(newRecord);
+        
+        // Then: one record is updated
+        assertEquals(1L, count);
+
+        //     and the updated record can be read from the DB
+        Iterable<Outage> searchResults = dao.findAll();
+        assertNotNull(searchResults);
+        Iterator<Outage> searchResultsIterator = searchResults.iterator();
+
+        //     and record can be read from the DB
+        Outage returnedRecord =  searchResultsIterator.next();
+        assertNotNull(returnedRecord);
+        assertFalse("Has more than one result", searchResultsIterator.hasNext());
+
+        //     and record contents match.
+        assertEquals(Integer.valueOf(512), returnedRecord.getNumberOfLines());
+        
+        LOG.info("returnedOutage: {}", returnedRecord);
     }
 
     @Test

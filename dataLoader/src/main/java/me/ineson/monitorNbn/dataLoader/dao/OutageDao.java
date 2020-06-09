@@ -3,6 +3,8 @@
  */
 package me.ineson.monitorNbn.dataLoader.dao;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -59,6 +61,10 @@ public class OutageDao {
         createCollection().insertOne(outage);
         return outage;
     }
+
+	public long update(Outage outage) {
+        return createCollection().replaceOne(eq("_id", outage.getId()), outage).getModifiedCount();		
+	}
 
 	public long delete(LocalDate date) {
 		LocalDateTime startTime = date.atStartOfDay();
