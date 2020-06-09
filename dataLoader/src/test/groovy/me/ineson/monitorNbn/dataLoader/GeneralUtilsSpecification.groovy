@@ -7,7 +7,7 @@ class GeneralUtilsSpecification extends Specification {
     @Unroll
     def "checkStartStringExists tests"(String searchString, List<String> testLines, boolean expectedResult) {
 		expect:
-		    GeneralUtils.checkStartStringExists(searchString, testLines) == expectedResult
+		    GeneralUtils.hasStringStartingWithPrefix(testLines, searchString) == expectedResult
 	
 		where:
 			searchString |  testLines                                 | expectedResult
@@ -20,11 +20,26 @@ class GeneralUtilsSpecification extends Specification {
 			
 	}
 	
+	@Unroll
+	def "getStringStartingWithPrefix tests"(String searchString, List<String> testLines, String expectedResult) {
+		expect:
+			GeneralUtils.getStringStartingWithPrefix(testLines, searchString) == expectedResult
+	
+		where:
+			searchString |  testLines                                 | expectedResult
+			null         |  null                                      | null
+			"aa"         |  null                                      | null
+			null         |  [ "str" ]                                 | null
+			"aa"         |  [ "aa bb" ]                               | "aa bb"
+			"bb"         |  [ "aa bb" ]                               | null
+			"bb"         |  [ "aaa", null, "bbb", "ccc" ]             | "bbb"
+			
+	}
 
     @Unroll
-    def "checkStringContainsIgnoreCase tests"(String searchString, List<String> testLines, boolean expectedResult) {
+    def "hasStringContainsIgnoreCase tests"(String searchString, List<String> testLines, boolean expectedResult) {
 		expect:
-		    GeneralUtils.checkStringContainsIgnoreCase(searchString, testLines) == expectedResult
+		    GeneralUtils.hasStringContainsIgnoreCase(testLines, searchString) == expectedResult
 	
 		where:
 			searchString |  testLines                                 | expectedResult

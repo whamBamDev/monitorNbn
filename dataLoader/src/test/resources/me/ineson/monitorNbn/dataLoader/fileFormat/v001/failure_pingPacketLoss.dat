@@ -1,0 +1,53 @@
+==== start(001): 04-06-2020 00:19:01
+== traceroute - IP: 04-06-2020 00:19:01
+tcptraceroute 203.50.5.178 80 -w 1
+Running:
+    traceroute -T -O info -w 1 -p 80 203.50.5.178 
+traceroute to 203.50.5.178 (203.50.5.178), 30 hops max, 60 byte packets
+ 1  mymodem.modem (192.168.0.1)  0.793 ms  0.588 ms  0.539 ms
+ 2  gateway.nb09.sydney.asp.telstra.net (58.162.26.73)  12.397 ms  12.493 ms  12.353 ms
+ 3  ae259.ken-ice301.sydney.telstra.net (203.50.62.212)  12.029 ms ae259.chw-ice301.sydney.telstra.net (203.50.62.196)  11.870 ms ae259.ken-ice301.sydney.telstra.net (203.50.62.212)  10.968 ms
+ 4  bundle-ether25.chw-core10.sydney.telstra.net (203.50.61.64)  11.462 ms  12.006 ms bundle-ether25.ken-core10.sydney.telstra.net (203.50.61.80)  10.985 ms
+ 5  bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  22.627 ms bundle-ether10.win-core10.melbourne.telstra.net (203.50.11.123)  21.844 ms bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  21.920 ms
+ 6  bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  25.894 ms bundle-ether2.exi-ncprouter101.melbourne.telstra.net (203.50.11.209)  19.990 ms bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  20.060 ms
+ 7  www.telstra.net (203.50.5.178) <syn,ack>  24.999 ms  20.926 ms bundle-ether2.exi-ncprouter101.melbourne.telstra.net (203.50.11.209)  20.842 ms
+Exit Code: 0
+
+== traceroute - DNS Lookup: 04-06-2020 00:19:01
+tcptraceroute www.telstra.com.au 80 -w 1
+Running:
+    traceroute -T -O info -w 1 -p 80 www.telstra.com.au 
+traceroute to www.telstra.com.au (13.35.149.77), 30 hops max, 60 byte packets
+ 1  mymodem.modem (192.168.0.1)  0.713 ms  0.550 ms  0.611 ms
+ 2  gateway.nb09.sydney.asp.telstra.net (58.162.26.73)  13.443 ms  12.961 ms  12.706 ms
+ 3  ae259.ken-ice301.sydney.telstra.net (203.50.62.212)  12.344 ms ae259.chw-ice301.sydney.telstra.net (203.50.62.196)  11.932 ms  11.579 ms
+ 4  bundle-ether25.chw-core10.sydney.telstra.net (203.50.61.64)  13.327 ms  13.177 ms  11.728 ms
+ 5  bundle-ether1.chw-edge903.sydney.telstra.net (203.50.11.177)  11.758 ms bundle-ether1.ken-edge903.sydney.telstra.net (203.50.11.173)  10.075 ms  9.695 ms
+ 6  ama3269862.lnk.telstra.net (203.27.176.58)  14.058 ms ama3261555.lnk.telstra.net (139.130.253.218)  27.941 ms  27.226 ms
+ 7  52.95.38.93 (52.95.38.93)  15.778 ms 52.95.38.43 (52.95.38.43)  10.503 ms 52.95.38.51 (52.95.38.51)  9.833 ms
+ 8  52.95.37.71 (52.95.37.71)  8.953 ms 52.95.36.11 (52.95.36.11)  13.934 ms 52.95.37.87 (52.95.37.87)  13.625 ms
+ 9  54.240.203.64 (54.240.203.64)  12.728 ms * *
+10  * 52.95.36.54 (52.95.36.54)  11.060 ms *
+11  52.95.36.11 (52.95.36.11)  10.807 ms  13.499 ms *
+12  * * *
+13  * * *
+14  * * *
+15  * server-13-35-149-77.syd1.r.cloudfront.net (13.35.149.77) <syn,ack>  13.895 ms  13.526 ms
+Exit Code: 0
+
+== ping - DNS Lookup: 04-06-2020 00:19:03
+ping www.telstra.com.au -c 1
+PING www.telstra.com.au (198.18.1.1) 56(84) bytes of data.
+From mymodem.modem (192.168.0.1) icmp_seq=1 Destination Net Unreachable
+
+--- www.telstra.com.au ping statistics ---
+1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms
+
+Exit Code: 0
+
+== Modem Status: 04-06-2020 00:19:03
+Modem URL: http://192.168.0.1/
+Modem Status: Connection Status [Connected], Access Type [ETH], Connection Type [IPoE], Mode [SIP], Leds (Modem LEDs: Online [true], WAN/DSL [true], Mobile Mode [false], Mobile Signal [true], Phone [true])
+Exit Code: 0
+
+==== end: 04-06-2020 00:19:27

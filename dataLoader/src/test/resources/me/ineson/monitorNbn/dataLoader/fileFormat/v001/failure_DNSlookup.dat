@@ -1,0 +1,39 @@
+==== start(001): 04-06-2020 00:19:01
+== traceroute - IP: 04-06-2020 00:19:01
+tcptraceroute 203.50.5.178 80 -w 1
+Running:
+    traceroute -T -O info -w 1 -p 80 203.50.5.178 
+traceroute to 203.50.5.178 (203.50.5.178), 30 hops max, 60 byte packets
+ 1  mymodem.modem (192.168.0.1)  0.793 ms  0.588 ms  0.539 ms
+ 2  gateway.nb09.sydney.asp.telstra.net (58.162.26.73)  12.397 ms  12.493 ms  12.353 ms
+ 3  ae259.ken-ice301.sydney.telstra.net (203.50.62.212)  12.029 ms ae259.chw-ice301.sydney.telstra.net (203.50.62.196)  11.870 ms ae259.ken-ice301.sydney.telstra.net (203.50.62.212)  10.968 ms
+ 4  bundle-ether25.chw-core10.sydney.telstra.net (203.50.61.64)  11.462 ms  12.006 ms bundle-ether25.ken-core10.sydney.telstra.net (203.50.61.80)  10.985 ms
+ 5  bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  22.627 ms bundle-ether10.win-core10.melbourne.telstra.net (203.50.11.123)  21.844 ms bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  21.920 ms
+ 6  bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  25.894 ms bundle-ether2.exi-ncprouter101.melbourne.telstra.net (203.50.11.209)  19.990 ms bundle-ether8.exi-core10.melbourne.telstra.net (203.50.11.125)  20.060 ms
+ 7  www.telstra.net (203.50.5.178) <syn,ack>  24.999 ms  20.926 ms bundle-ether2.exi-ncprouter101.melbourne.telstra.net (203.50.11.209)  20.842 ms
+Exit Code: 0
+
+== traceroute - DNS Lookup: 04-06-2020 00:19:01
+tcptraceroute www.telstra.com.au 80 -w 1
+Running:
+    traceroute -T -O info -w 1 -p 80 www.telstra.com.au 
+www.telstra.com.au: Temporary failure in name resolution
+Cannot handle "host" cmdline arg `www.telstra.com.au' on position 1 (argc 8)
+Exit Code: 2
+
+== ping - DNS Lookup: 04-06-2020 00:19:03
+ping www.telstra.com.au -c 1
+PING www.telstra.com.au(2600:9000:2083:4600:17:876d:b540:93a1 (2600:9000:2083:4600:17:876d:b540:93a1)) 56 data bytes
+64 bytes from 2600:9000:2083:4600:17:876d:b540:93a1 (2600:9000:2083:4600:17:876d:b540:93a1): icmp_seq=1 ttl=54 time=9.81 ms
+
+--- www.telstra.com.au ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 9.814/9.814/9.814/0.000 ms
+Exit Code: 0
+
+== Modem Status: 04-06-2020 00:19:03
+Modem URL: http://192.168.0.1/
+Modem Status: Connection Status [Connected], Access Type [ETH], Connection Type [IPoE], Mode [SIP], Leds (Modem LEDs: Online [true], WAN/DSL [true], Mobile Mode [false], Mobile Signal [true], Phone [true])
+Exit Code: 0
+
+==== end: 04-06-2020 00:19:27
