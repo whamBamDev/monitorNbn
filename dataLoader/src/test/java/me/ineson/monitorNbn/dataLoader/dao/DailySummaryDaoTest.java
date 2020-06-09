@@ -95,7 +95,8 @@ class DailySummaryDaoTest {
         final LocalDate date = LocalDate.now();
         dailySummary.setDate(date);
         dailySummary.setDatafile("test/file.todate.date");
-        dailySummary.setOutageCount(4);;
+        dailySummary.setOutageCount(4);
+        dailySummary.setTestCount(400);
 
         // When: Record is saved
         DailySummary newRecord =  dao.add(dailySummary);
@@ -119,19 +120,22 @@ class DailySummaryDaoTest {
         assertEquals(date, returnedDailySummary.getDate());
         assertEquals("test/file.todate.date", returnedDailySummary.getDatafile());
         assertEquals(Integer.valueOf(4), returnedDailySummary.getOutageCount());
+        assertEquals(Integer.valueOf(400), returnedDailySummary.getTestCount());
         
         LOG.info("returnedOutage: {}", returnedDailySummary);
         listDbContents("post test", mongoTemplate);
     }
 
     @Test
+    @DisplayName("test update success")
     void testInsertAndUpdateSuccess(@Autowired MongoTemplate mongoTemplate) {
         // Given: record to save
         DailySummary dailySummary = new DailySummary();
         final LocalDate date = LocalDate.now();
         dailySummary.setDate(date);
         dailySummary.setDatafile("test/file.todate.date");
-        dailySummary.setOutageCount(4);;
+        dailySummary.setOutageCount(4);
+        dailySummary.setTestCount(400);
 
         //    and record is saved
         DailySummary newRecord =  dao.add(dailySummary);
@@ -143,6 +147,7 @@ class DailySummaryDaoTest {
 
         // When: change the outage count and update
         newRecord.setOutageCount(22);
+        newRecord.setTestCount(1000);
         long count = dao.update(newRecord);
         
         // Then: one record is updated
@@ -161,11 +166,11 @@ class DailySummaryDaoTest {
         //     and record contents match.
         assertEquals(date, returnedDailySummary.getDate());
         assertEquals(Integer.valueOf(22), returnedDailySummary.getOutageCount());
+        assertEquals(Integer.valueOf(1000), returnedDailySummary.getTestCount());
         
         LOG.info("returnedOutage: {}", returnedDailySummary);
         listDbContents("post test", mongoTemplate);
     }
-
 
     @Test
     @DisplayName("Test findByDate success")

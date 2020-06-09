@@ -11,7 +11,9 @@ public final class DailySummary extends BaseEntity {
     
     private Integer outageCount;
 
-	public LocalDate getDate() {
+    private Integer testCount;
+
+    public LocalDate getDate() {
 		return date;
 	}
 
@@ -35,13 +37,22 @@ public final class DailySummary extends BaseEntity {
 		this.outageCount = outageCount;
 	}
     
-    @Override
+    public Integer getTestCount() {
+		return testCount;
+	}
+
+	public void setTestCount(Integer testCount) {
+		this.testCount = testCount;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("DailySummary [id=").append(getId())
 			.append(", date=").append(date)
 			.append(", datafile=").append(datafile)
 			.append(", outageCount=").append(outageCount)
+			.append(", testCount=").append(testCount)
 			.append("]");
 		return builder.toString();
 	}
