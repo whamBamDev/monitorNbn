@@ -92,15 +92,18 @@ public abstract class AbstractTestVerifier {
 
 		return verifier;
 	}
-	
-	protected static void put(String string, TestVerifierFormatVersion001 testVerifierFormatVersion001) {
-		// TODO Auto-generated method stub
-		
-	}
 
+	/**
+	 * @param testSection
+	 * @return
+	 */
 	public abstract TestSectionOutcome getTestOutcome( TestSection testSection);
 
-	
+	/**
+	 * @param matcher
+	 * @param dateField
+	 * @return
+	 */
 	protected static LocalDateTime parseDate(Matcher matcher, int dateField) {
 		String stringDateTime = matcher.group(dateField);
 		if( StringUtils.isNotBlank(stringDateTime)) {

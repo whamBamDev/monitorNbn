@@ -21,17 +21,18 @@ class TestVerifierFormatVersion001Specification extends Specification {
             testOutcome != null
 			testOutcome.isTestSuccessful() == result
 			testOutcome.getStartTime() != null
+			testOutcome.getStartTime().toString() == startTime
 			testOutcome.getEndTime() != null
-			
+			testOutcome.getEndTime().toString() == endTime
 	
         where:
             testfile                        | result | startTime | endTime
-            "succuess.dat"                  | true   | "" | ""
-            "disconnected.dat"              | false  | "" | ""
-            "connectedVia4G.dat"            | false  | "" | ""
-            "failed_traceRouteTimeout.dat"  | false  | "" | ""
-            "failure_DNSlookup.dat"         | false  | "" | ""
-            "failure_pingPacketLoss.dat"    | false  | "" | ""
+            "succuess.dat"                  | true   | "2019-12-05T00:01:02" | "2019-12-05T00:01:30"
+            "disconnected.dat"              | false  | "2020-06-04T00:19:01" | "2020-06-04T00:19:27"
+            "connectedVia4G.dat"            | false  | "2020-06-06T09:51:01" | "2020-06-06T09:51:30"
+            "failed_traceRouteTimeout.dat"  | false  | "2020-06-04T21:12:01" | "2020-06-04T21:13:22"
+            "failure_DNSlookup.dat"         | false  | "2020-06-04T00:19:01" | "2020-06-04T00:19:27"
+            "failure_pingPacketLoss.dat"    | false  | "2020-06-04T00:19:01" | "2020-06-04T00:19:27"
 			
     }
 

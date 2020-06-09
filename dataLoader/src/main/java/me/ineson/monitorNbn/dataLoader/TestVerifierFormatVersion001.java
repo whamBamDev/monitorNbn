@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class TestVerifierFormatVersion001 extends AbstractTestVerifier {
 
-    private static final Logger log = LogManager.getLogger(TestVerifierFormatVersion001.class);
+    private static final Logger LOG = LogManager.getLogger(TestVerifierFormatVersion001.class);
 	
     public TestSectionOutcome getTestOutcome( TestSection testSection) {
         TestSectionOutcome outcome = new TestSectionOutcome();
@@ -51,11 +51,11 @@ public class TestVerifierFormatVersion001 extends AbstractTestVerifier {
             }
         }
 
-        log.info("Test starting at {} has {} sections", outcome.getStartTime(), individualTests.size());
+        LOG.info("Test starting at {} has {} sections", outcome.getStartTime(), individualTests.size());
         for (List<String> singleTest : individualTests) {
             // Check if the returned exit code is 0.
             if( ! GeneralUtils.hasStringContainsIgnoreCase(singleTest, TEST_SUCCESS) ) {
-                log.info("Test starting at {} had a command that failed", outcome.getStartTime());
+                LOG.debug("Test starting at {} had a command that failed", outcome.getStartTime());
                 outcome.setTestSuccessful(false);
                 break;
 	        }
@@ -63,7 +63,7 @@ public class TestVerifierFormatVersion001 extends AbstractTestVerifier {
             // If the test used traceroute then check for a "<syn.ack>" response.
             if( GeneralUtils.hasStringStartingWithPrefix(singleTest, TEST_TRACEROUTE)) {
                 if( ! GeneralUtils.hasStringContainsIgnoreCase(singleTest, TEST_TRACEROUTE_SUCCESS)) {
-                    log.info("Test starting at {} failed traceroute check", outcome.getStartTime());
+                    LOG.debug("Test starting at {} failed traceroute check", outcome.getStartTime());
                     outcome.setTestSuccessful(false);
 					break;
 				}
@@ -72,7 +72,7 @@ public class TestVerifierFormatVersion001 extends AbstractTestVerifier {
             // If performed a ping then there was no packet loss.
             if( GeneralUtils.hasStringStartingWithPrefix(singleTest, TEST_PING)) {
                 if( ! GeneralUtils.hasStringContainsIgnoreCase(singleTest, TEST_PING_SUCCESS)) {
-                    log.info("Test starting at {} failed ping check", outcome.getStartTime());
+                    LOG.debug("Test starting at {} failed ping check", outcome.getStartTime());
                     outcome.setTestSuccessful(false);
 					break;
 				}
@@ -84,9 +84,9 @@ public class TestVerifierFormatVersion001 extends AbstractTestVerifier {
                 String modemStatusLine =  GeneralUtils.getStringStartingWithPrefix(singleTest, TEST_MODEN_STATUS_LINE);
                 if(StringUtils.isNotBlank(modemStatusLine)) {
                     outcome.setTestSuccessful(connectedViaNbn(modemStatusLine));
-                    log.info("Test starting at {} modem status result is {}", outcome.getStartTime(), outcome.isTestSuccessful());
+                    LOG.debug("Test starting at {} modem status result is {}", outcome.getStartTime(), outcome.isTestSuccessful());
                 } else {
-                    log.info("Test starting at {} failed could find modem status result", outcome.getStartTime());
+                    LOG.debug("Test starting at {} failed could find modem status result", outcome.getStartTime());
                     outcome.setTestSuccessful(false);
 				}
 			}
