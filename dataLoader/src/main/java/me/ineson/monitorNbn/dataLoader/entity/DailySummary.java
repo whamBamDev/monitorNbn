@@ -4,12 +4,14 @@ import java.time.LocalDate;
 
 
 public final class DailySummary extends BaseEntity {
-	
+
 	private LocalDate date;
     
 	private String datafile;
     
     private Integer outageCount;
+
+    private Integer failedTestCount;
 
     private Integer testCount;
 
@@ -37,7 +39,15 @@ public final class DailySummary extends BaseEntity {
 		this.outageCount = outageCount;
 	}
     
-    public Integer getTestCount() {
+    public Integer getFailedTestCount() {
+		return failedTestCount;
+	}
+
+	public void setFailedTestCount(Integer failedTestCount) {
+		this.failedTestCount = failedTestCount;
+	}
+
+	public Integer getTestCount() {
 		return testCount;
 	}
 
@@ -52,6 +62,7 @@ public final class DailySummary extends BaseEntity {
 			.append(", date=").append(date)
 			.append(", datafile=").append(datafile)
 			.append(", outageCount=").append(outageCount)
+			.append(", failedTestCount=").append(failedTestCount)
 			.append(", testCount=").append(testCount)
 			.append("]");
 		return builder.toString();

@@ -70,7 +70,7 @@ class DailySummaryDaoTest {
     	Set<String>names = mongoTemplate.getCollectionNames();
     	LOG.info("Collections: {}", String.join(",", names));
     	MongoCollection<Document>collection = mongoTemplate.getCollection(DailySummaryDao.COLLECTION_NAME);
-    	LOG.info("document count: {}", collection.countDocuments());
+    	LOG.info("document count: {}", collection.count());
     	
     	StringBuilder string = new StringBuilder();
     	collection.listIndexes().forEach((Consumer<? super Document>) (Document document) -> {
@@ -148,12 +148,9 @@ class DailySummaryDaoTest {
         // When: change the outage count and update
         newRecord.setOutageCount(22);
         newRecord.setTestCount(1000);
-        long count = dao.update(newRecord);
-        
-        // Then: one record is updated
-        assertEquals(1L, count);
+        dao.update(newRecord);
 
-        //     and the updated record can be read from the DB
+        // Then the updated record can be read from the DB
         Iterable<DailySummary> searchResults = dao.findAll();
         assertNotNull(searchResults);
         Iterator<DailySummary> searchResultsIterator = searchResults.iterator();

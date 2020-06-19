@@ -64,6 +64,40 @@ jdk1.8.0_231
 
 $ sudo apt-get install mongodb
 
+$ service mongodb status
+
+
+Useful commands;
+
+> show dbs
+> use nbn
+> show collections
+> db.DailySummary.find()
+{ "_id" : ObjectId("5ee4dcb4f95e1856923e805c"), "datafile" : "/home/pi/monitorNbn/share/output/modemStatus_20200401.dat", "date" : ISODate("2020-04-01T00:00:00Z"), "outageCount" : 8, "testCount" : 1438 }
+> 
+
+> db.DailySummary.find( { date: { $gt: "2020-06-15" } } ).pretty()
+> db.DailySummary.find( { date: { $gt: "2020-06-15" } } ).sort( { date: 1 })
+> db.DailySummary.find( { testCount: { $lt: 1000 } } ).sort( { date: 1 })
+
+> db.Outage.find( { startTime: { $gte: "2020-06-15", $lt: "2020-06-16"} } ).sort( { startTime: 1 })
+
+"startTime" : "2020-06-13T08:35:01"
+
+
+$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
+
+//Reload whole 
+find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name "modemStatus_*.dat" -exec ./dataLoader -f  {} \;
+
+
+
+x) Tomcat
+
+$ sudo apt-get install tomcat9
+
+
+
 
 5) Install nodeJs
 
@@ -79,10 +113,20 @@ $ cromtab -e
 
 NBN_HOME=/home/pi/monitorNbn/share
 NBN_DATA=/home/pi/monitorNbn/share/output
+NBN_DATA_LOADER=/home/pi/monitorNbn/share/output
 
 * * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date +\%Y\%m\%d`.dat 2>&1
 
+0 6 * * * ${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NBN_DATA_LOADER}/log/dataLoader.log 2>&1
 
+
+/home/pi/monitorNbn/share/dataLoader/bin/dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> /home/pi/monitorNbn/share/dataLoader/dataLoader.log 2>&1
+
+${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NBN_DATA_LOADER}/log/dataLoader.log 2>&1
+
+dt=$(date --date yesterday "+%a %d/%m/%Y")
+
+$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
 
 Configure Develpoment Environment
 
@@ -111,3 +155,7 @@ D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to down
 vagrant up
 
 
+
+
+
+Server at localhost:27017 reports wire version 0, but this version of the driver requires at least 2 (MongoDB 2.6).

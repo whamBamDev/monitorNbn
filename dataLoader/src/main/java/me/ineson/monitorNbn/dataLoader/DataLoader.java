@@ -14,8 +14,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import me.ineson.monitorNbn.dataLoader.dao.DailySummaryDao;
+import me.ineson.monitorNbn.dataLoader.dao.DatasourceManager;
+import me.ineson.monitorNbn.dataLoader.dao.OutageDao;
 
 /**
  * @author peter
@@ -29,7 +34,7 @@ public class DataLoader {
 
 	private static final String OPTTON_DATAFILE = "f";
 
-	private static final String OPTTON_OVERWRITE = "o"; 
+	private static final String OPTTON_TRUNCATE = "t"; 
 
 	private static final String OPTTON_TAIL = "t"; 
 
@@ -52,9 +57,9 @@ public class DataLoader {
         		.desc( "The data file to be loaded into the database")
         		.hasArg()
         		.build());
-        options.addOption( Option.builder( OPTTON_OVERWRITE)
-        		.longOpt( "overwrite")
-        		.desc( "Overwrites exisiting data in the database, the default is just to add new entries")
+        options.addOption( Option.builder( OPTTON_TRUNCATE)
+        		.longOpt( "truncate")
+        		.desc( "Truncate the ALL existing data in the database")
         		.build());
         options.addOption( Option.builder( OPTTON_TAIL)
         		.longOpt("tail")
@@ -75,16 +80,33 @@ public class DataLoader {
 	        	HelpFormatter formatter = new HelpFormatter();
 	        	formatter.printHelp( "DataLoader", options );
 	        } else {
-	            boolean tailFile = line.hasOption(OPTTON_TAIL);
-	            boolean overwrite = line.hasOption(OPTTON_OVERWRITE);
+	        	final String url = line.getOptionValue(OPTTON_DATABASE_URI);
+	        	final DatasourceManager datasourceManager = StringUtils.isBlank(url) ? new DatasourceManager() : new DatasourceManager(url);
+	        	final DailySummaryDao dailySummaryDao = new DailySummaryDao(datasourceManager.getDatabase());
+	        	final OutageDao outageDao = new OutageDao(datasourceManager.getDatabase());
+
+	        	if(line.hasOption(OPTTON_TRUNCATE)) {
+	        		dailySummaryDao.deleteAll();
+	        		outageDao.deleteAll();
+	        	}
+
+	            //boolean tailFile = line.hasOption(OPTTON_TAIL);
+	            boolean overwrite = line.hasOption(OPTTON_TRUNCATE);
+
 	            String dataFilename = line.getOptionValue(OPTTON_DATAFILE);
 	            File dataFile = new File( dataFilename);
+	            if (!dataFile.exists() && dataFile.isFile()) {
+	            	throw new FileNotFoundException(dataFilename);
+	            } else if (!dataFile.canRead()) {
+	            	throw new FileNotFoundException("Cannot read file: " + dataFilename);
+				}
 	            
-	            String databaseUri = line.getOptionValue(OPTTON_DATABASE_URI);
-
 	            DataFileParser dataFileParser = new DataFileParser();
+	            dataFileParser.setDailySummaryDao(dailySummaryDao);
+	            dataFileParser.setOutageDao(outageDao);
+	            
 	            log.info("About to read data from file: {}", dataFile.getAbsolutePath());
-	            dataFileParser.processFile(dataFile, tailFile, databaseUri, overwrite);
+	            dataFileParser.processFile(dataFile);
 	        }
 	    
 	    }

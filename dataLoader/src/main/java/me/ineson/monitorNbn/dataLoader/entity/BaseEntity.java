@@ -6,7 +6,8 @@ import org.bson.types.ObjectId;
  * @author peter
  *
  */
-public abstract class BaseEntity { 
+public abstract class BaseEntity {
+
 	private ObjectId id;
 
 	public ObjectId getId() {

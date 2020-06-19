@@ -28,18 +28,22 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.10.2'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.2'
 
-	implementation "org.mongodb:mongodb-driver-sync:${mongodbVersion}"
-	implementation "org.mongodb:mongodb-driver-legacy:${mongodbVersion}"
+	implementation "org.mongodb:mongo-java-driver:3.5.0"
+//	implementation "org.mongodb:bson:3.2.2"
+//	implementation "org.mongodb:mongodb-driver-sync:${mongodbVersion}"
+//	implementation "org.mongodb:mongodb-driver-legacy:${mongodbVersion}"
 	
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${junitVersion}")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 	
     testImplementation "org.spockframework:spock-core:1.2-groovy-2.5"
-	testImplementation "org.springframework.boot:spring-boot-starter-data-mongodb:2.3.0.RELEASE"
+//	testImplementation "org.springframework.boot:spring-boot-starter-data-mongodb:2.3.0.RELEASE"
+	testImplementation "org.springframework.boot:spring-boot-starter-data-mongodb:2.1.10.RELEASE"
 	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0'
 	testImplementation 'org.springframework:spring-context:5.2.6.RELEASE'
-	testImplementation( 'org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE') {
+//	testImplementation( 'org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE') {
+	testImplementation( 'org.springframework.boot:spring-boot-starter-test:2.1.10.RELEASE') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
@@ -61,7 +65,7 @@ jacocoTestReport {
 
 
 application {
-    mainClassName = 'CheckModem'
+    mainClassName = 'me.ineson.monitorNbn.dataLoader.DataLoader'
 }
 
 

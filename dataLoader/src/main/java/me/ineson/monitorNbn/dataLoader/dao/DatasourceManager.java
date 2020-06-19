@@ -3,16 +3,13 @@
  */
 package me.ineson.monitorNbn.dataLoader.dao;
 
+import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
-
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 /**
  * @author peter
@@ -22,7 +19,7 @@ public class DatasourceManager {
 
     private MongoDatabase mongoDatabase;        
 
-    private MongoClient mongoClient;
+    private com.mongodb.MongoClient mongoClient;
     
     private String dbUrl = null;
 
@@ -30,14 +27,15 @@ public class DatasourceManager {
 
     public DatasourceManager() {
         super();
-        mongoClient = MongoClients.create();
+        mongoClient = new MongoClient();
         createDatabase(mongoClient);
     }
 
     public DatasourceManager(String url) {
         super();
         dbUrl = url;
-        mongoClient = MongoClients.create(url);
+        MongoClientURI connectionString = new MongoClientURI(dbUrl);
+        mongoClient = new MongoClient(connectionString);
         createDatabase(mongoClient);
     }
     
@@ -45,7 +43,8 @@ public class DatasourceManager {
         super();
         dbUrl = url;
         dbName = name;
-        mongoClient = MongoClients.create(url);
+        MongoClientURI connectionString = new MongoClientURI(dbUrl);
+        mongoClient = new MongoClient(connectionString);
         createDatabase(mongoClient);
     }
 
@@ -59,11 +58,13 @@ public class DatasourceManager {
 	
     private void createDatabase(MongoClient client) {
         MongoDatabase database = mongoClient.getDatabase(dbName);
-        
-        CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+
+        CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
+        		CodecRegistries.fromCodecs(new LocalDateCodec(), new LocalDateTimeCodec()),
+        		MongoClient.getDefaultCodecRegistry(),
+       		    CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+
         mongoDatabase = database.withCodecRegistry(pojoCodecRegistry);
-    	
     }
 	
 }

@@ -6,10 +6,12 @@ package me.ineson.monitorNbn.dataLoader.dao;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -57,17 +59,20 @@ public class DailySummaryDao {
 	}
 
     public DailySummary add(DailySummary dailySummary) {
+        if(Objects.isNull(dailySummary.getId())) {
+            dailySummary.setId(new ObjectId());
+        }
         createCollection().insertOne(dailySummary);
         return dailySummary;
     }
 
-	public long update(DailySummary dailySummary) {
-        return createCollection().replaceOne(eq(KEY_FIELD, dailySummary.getDate()), dailySummary).getModifiedCount();		
-	}
+	public void update(DailySummary dailySummary) {
+        createCollection().replaceOne(eq(KEY_FIELD, dailySummary.getDate()), dailySummary);
+    }
 
 	public long deleteAll() {
 		MongoCollection<DailySummary>collection = createCollection(); 
-		long count = collection.countDocuments();
+		long count = collection.count();
 		collection.drop();
 		return count;
 	}
@@ -90,6 +95,3 @@ public class DailySummaryDao {
     }
 
 }
-
-
-

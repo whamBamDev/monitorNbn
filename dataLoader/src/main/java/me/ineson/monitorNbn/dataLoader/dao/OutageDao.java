@@ -7,10 +7,12 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -58,12 +60,15 @@ public class OutageDao {
 	}
 
     public Outage add(Outage outage) {
+        if(Objects.isNull(outage.getId())) {
+        	outage.setId(new ObjectId());
+        }
         createCollection().insertOne(outage);
         return outage;
     }
 
-	public long update(Outage outage) {
-        return createCollection().replaceOne(eq("_id", outage.getId()), outage).getModifiedCount();		
+	public void update(Outage outage) {
+        createCollection().replaceOne(eq("_id", outage.getId()), outage);		
 	}
 
 	public long delete(LocalDate date) {
@@ -75,7 +80,7 @@ public class OutageDao {
 
 	public long deleteAll() {
 		MongoCollection<Outage>collection = createCollection(); 
-		long count = collection.countDocuments();
+		long count = collection.count();
 		collection.drop();
 		return count;
 	}
