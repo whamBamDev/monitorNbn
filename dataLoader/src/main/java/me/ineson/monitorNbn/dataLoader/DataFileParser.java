@@ -11,10 +11,10 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import me.ineson.monitorNbn.dataLoader.dao.DailySummaryDao;
-import me.ineson.monitorNbn.dataLoader.dao.OutageDao;
-import me.ineson.monitorNbn.dataLoader.entity.DailySummary;
-import me.ineson.monitorNbn.dataLoader.entity.Outage;
+import me.ineson.monitorNbn.shared.dao.DailySummaryDao;
+import me.ineson.monitorNbn.shared.dao.OutageDao;
+import me.ineson.monitorNbn.shared.entity.DailySummary;
+import me.ineson.monitorNbn.shared.entity.Outage;
 
 /**
  * @author peter

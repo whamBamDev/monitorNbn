@@ -1,5 +1,5 @@
 
 rootProject.name = 'master'
 
-includeFlat 'modemStatus', 'dataLoader'
+includeFlat 'shared', 'modemStatus', 'dataLoader', 'nbnMonitorWar'
 

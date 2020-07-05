@@ -66,7 +66,15 @@ $ sudo apt-get install mongodb
 
 $ service mongodb status
 
+$ sudo vi /etc/mongodb.conf
 
+Update the bind ip to 0.0.0.0, e.g.
+bind_ip = 0.0.0.0
+#bind_ip = 127.0.0.1
+#port = 27017
+
+
+$ sudo service mongodb restart
 Useful commands;
 
 > show dbs

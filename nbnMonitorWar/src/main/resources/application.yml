@@ -1,0 +1,13 @@
+mongoDb:
+    url: mongodb://ws1:27017
+---
+spring:
+    profiles: dev
+mongoDb:
+    url: mongodb://ws1:27017
+---
+spring:
+    profiles: production
+mongoDb:
+    url: mongodb://localhost:27017
+    

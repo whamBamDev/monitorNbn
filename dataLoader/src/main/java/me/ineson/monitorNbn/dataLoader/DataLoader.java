@@ -18,9 +18,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import me.ineson.monitorNbn.dataLoader.dao.DailySummaryDao;
-import me.ineson.monitorNbn.dataLoader.dao.DatasourceManager;
-import me.ineson.monitorNbn.dataLoader.dao.OutageDao;
+import me.ineson.monitorNbn.shared.dao.DailySummaryDao;
+import me.ineson.monitorNbn.shared.dao.DatasourceManager;
+import me.ineson.monitorNbn.shared.dao.OutageDao;
 
 /**
  * @author peter

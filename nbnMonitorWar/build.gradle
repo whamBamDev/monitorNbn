@@ -1,0 +1,68 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-cargo-plugin:2.7.1'
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.2.2.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+//	id 'com.bmuschko.cargo'
+//	id 'war'
+}
+
+apply plugin: 'com.bmuschko.cargo'
+apply plugin: 'war'
+
+sourceCompatibility = '1.8'
+
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+}
+
+
+dependencies {
+    implementation project(':shared')   
+
+	implementation "org.mongodb:mongo-java-driver:${mongodbVersion}"
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    def cargoVersion = '1.7.10'
+    cargo "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion",
+          "org.codehaus.cargo:cargo-licensed-dtds:$cargoVersion",
+          "org.codehaus.cargo:cargo-ant:$cargoVersion"
+
+}
+
+cargoRunLocal.dependsOn assemble
+cargoStartLocal.dependsOn assemble
+cargoStartLocal.dependsOn assemble
+
+cargo {
+	containerId = 'tomcat8x'
+	
+	deployable {
+//		file = file("$buildDir/libs/nbnMonitorWar-1.0.war")
+		context = 'nbnMonitor'
+	}
+
+	local {
+		installer {
+			installUrl = 'https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.38/bin/apache-tomcat-8.5.38.zip'
+			downloadDir = file("$buildDir/download")
+			extractDir = file("$buildDir/extract")
+		}
+		outputFile = file("$buildDir/output.log")
+	}
+}

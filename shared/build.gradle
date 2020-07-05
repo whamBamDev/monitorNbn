@@ -1,0 +1,21 @@
+plugins {
+ id 'java-library'
+}
+
+//ext.mongodbVersion = '3.5.0'
+
+dependencies {
+	api "org.mongodb:mongo-java-driver:${mongodbVersion}"
+
+    implementation 'org.apache.commons:commons-collections4:4.4'
+
+	testImplementation "org.springframework.boot:spring-boot-starter-data-mongodb:2.1.10.RELEASE"
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0'
+	testImplementation 'org.springframework:spring-context:5.2.6.RELEASE'
+	testImplementation( 'org.springframework.boot:spring-boot-starter-test:2.1.10.RELEASE') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+}
+
