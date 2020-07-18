@@ -1,7 +1,7 @@
 /**
  * 
  */
-package me.ineson.monitorNbn.dataLoader;
+package me.ineson.monitorNbn.shared.io;
 
 import java.io.Closeable;
 import java.io.File;
@@ -60,6 +60,23 @@ public class FileReader implements Closeable {
 		} while( testSection.getLastLineNumber() == 0) ;
 		
 		return testSection;
+	}
+
+    public void seek(long pos) throws IOException {
+        file.seek(pos);
+	}
+
+    public String getLine() throws IOException {
+        return file.readLine();
+	}
+
+    public List<String> getLines(int count) throws IOException {
+    	List<String> lines = new ArrayList<String>(count);
+    	for (int i = 0; i < count; i++) {
+    		lines.add(getLine());
+			
+		}
+        return lines;
 	}
 
 	public void close() throws IOException {

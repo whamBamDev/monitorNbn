@@ -1,13 +1,13 @@
 Configuration:
-  status: info
   name: NbnMonitor
-  thresholdFilter:
-    level: debug
   appenders:
     Console:
       name: STDOUT
+      target: SYSTEM_OUT
       PatternLayout:
         Pattern: "%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
+
+
         
 Loggers:
     logger:

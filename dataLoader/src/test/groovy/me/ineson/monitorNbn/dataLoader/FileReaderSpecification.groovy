@@ -1,5 +1,7 @@
 package me.ineson.monitorNbn.dataLoader;
 
+import me.ineson.monitorNbn.shared.io.FileReader
+import me.ineson.monitorNbn.shared.io.TestSection
 import spock.lang.*
 
 class FileReaderSpecification extends Specification {

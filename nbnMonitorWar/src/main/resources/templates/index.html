@@ -5,16 +5,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link href="css/nbnMonitor.css" rel="stylesheet">
-    <link href="https://unpkg.com/tabulator-tables@4.1.4/dist/css/tabulator.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/tabulator-tables@4.1.4/dist/css/bulma/tabulator_bulma.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@4.7.1/dist/css/tabulator.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@4.7.1/dist/css/bulma/tabulator_bulma.min.css" rel="stylesheet">
 
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.1.4/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.7.1/dist/js/tabulator.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/moment@2.27.0/min/moment.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
 </head>
 <body>
+    <div class="chart-container" style="position: relative; height:80vh; width:90vw">
+        <canvas id="myChart"></canvas>
+    </div>
     <div id="example-table"></div>
 
 <script>var ctx = "${pageContext.request.contextPath}"</script>
@@ -27,7 +30,19 @@
             //url - the URL of the request
             //params - the parameters passed with the request
             //response - the JSON object returned in the body of the response.
+            var dates = [];
+            var outages = [];
+            var testCounts = [];
 
+            response.results.forEach(function (item, index) {
+            	  console.log(item, index);
+            	  dates.unshift(item.date);
+                  outages.unshift(item.outageCount);
+            	  testCounts.unshift(item.testCount);
+            	});
+            createGraph( dates, outages, testCounts);
+            
+            
             return response.results; //return the tableData property of a response json object
         },
         height:400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
@@ -36,7 +51,7 @@
             {title:"Date", field:"date", width:"25%", align:"left",
             	formatter:"datetime", formatterParams:{
             	    inputFormat:"YYYY-MM-DD",
-            	    outputFormat:"DD MMM YYYY",
+            	    outputFormat:"ddd, D MMM YYYY",
             	    invalidPlaceholder:"(invalid date)"}
               },
             {title:"Outage Count", field:"outageCount", width:"24%", align:"right"},
@@ -44,23 +59,36 @@
             {title:"Total test count", field:"testCount", width:"24%", align:"right" },
         ],
         rowClick:function(e, row){ //trigger an alert message when the row is clicked
-            alert("Row " + row.getData().id + " Clicked!!!!");
+            window.location.href = "outage?date=" + row.getData().date;
         },
     });    
 
     </script>
 
-<canvas id="myChart" width="400" height="400"></canvas>
 <script>
+
 var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
+
+function createGraph( dates, outages, testCounts) {
+	
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: dates,
+            datasets: [{
+                    label: 'Outages',
+                    data: outages,
+                    yAxisID: 'y-axis-outages'
+                },{
+                    label: 'Tests Performed',
+                    type: 'line',
+                    borderColor: 'rgb(153, 102, 255)',
+                    fill: false,
+//                    backgroundColor: 'rgb(153, 102, 255)',                    
+                    data: testCounts,
+                    yAxisID: 'y-axis-testCount'
+                }
+/*            backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
                 'rgba(255, 206, 86, 0.2)',
@@ -76,19 +104,45 @@ var myChart = new Chart(ctx, {
                 'rgba(153, 102, 255, 1)',
                 'rgba(255, 159, 64, 1)'
             ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+                borderWidth: 1
+                 */
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'NBN Monitoring for Outages'
+            },
+            scales: {
+                yAxes: [{
+                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                    display: true,
+                    position: 'left',
+                    id: 'y-axis-outages',
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }, {
+                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                    display: true,
+                    position: 'right',
+                    id: 'y-axis-testCount',
+                    // grid line settings
+                    gridLines: {
+                        drawOnChartArea: false, // only want the grid lines for one axis to show up
+                    },
+                    includeZero: true,
+                    ticks: {
+                        beginAtZero: true
+                    },
+                }],
+            }
+            
         }
-    }
-});
+    });
+}
 </script>
 </body>
 </html>

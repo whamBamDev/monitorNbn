@@ -3,6 +3,8 @@
  */
 package me.ineson.monitorNbn.shared.dao;
 
+import java.util.Objects;
+
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -19,7 +21,7 @@ public class DatasourceManager {
 
     private MongoDatabase mongoDatabase;        
 
-    private com.mongodb.MongoClient mongoClient;
+    private MongoClient mongoClient;
     
     private String dbUrl = null;
 
@@ -65,6 +67,13 @@ public class DatasourceManager {
        		    CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
         mongoDatabase = database.withCodecRegistry(pojoCodecRegistry);
+    }
+    
+    public synchronized void close() {
+    	if (Objects.nonNull(mongoClient)) {
+            mongoClient.close();
+            mongoClient = null;
+    	}
     }
 	
 }

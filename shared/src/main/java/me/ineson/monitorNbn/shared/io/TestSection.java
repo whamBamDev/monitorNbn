@@ -1,4 +1,4 @@
-package me.ineson.monitorNbn.dataLoader;
+package me.ineson.monitorNbn.shared.io;
 
 import java.util.List;
 import java.util.Objects;

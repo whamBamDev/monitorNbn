@@ -9,15 +9,16 @@ import org.springframework.context.annotation.Configuration;
 import me.ineson.monitorNbn.shared.dao.DailySummaryDao;
 import me.ineson.monitorNbn.shared.dao.DatasourceManager;
 import me.ineson.monitorNbn.shared.dao.OutageDao;
+import me.ineson.monitorNbn.thymeleaf.UtilitiesDialect;
 
 @Configuration
 public class ApplicationConfig {
 
     private static final Logger LOG = LogManager.getLogger(ApplicationConfig.class);
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public DatasourceManager DatasourceManager(@Value("${mongoDb.url}") String url){
-    	LOG.info("---------------------- URL: {}", url);
+    	LOG.info("Mongo Db URL: {}", url);
         return new DatasourceManager(url);
     }
 
@@ -29,4 +30,8 @@ public class ApplicationConfig {
     	return new OutageDao(datasourceManager.getDatabase());
     }
 
+    @Bean
+    public UtilitiesDialect utilitiesDialect() {
+        return new UtilitiesDialect();
+    }
 }

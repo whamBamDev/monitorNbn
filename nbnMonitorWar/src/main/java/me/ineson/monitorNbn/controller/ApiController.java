@@ -11,6 +11,7 @@ import java.util.stream.StreamSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.ineson.monitorNbn.model.DailySummaryResults;
 import me.ineson.monitorNbn.shared.dao.DailySummaryDao;
+import me.ineson.monitorNbn.shared.dao.OutageDao;
+import me.ineson.monitorNbn.shared.entity.Outage;
 
 /**
  * @author peter
@@ -32,10 +35,13 @@ public class ApiController {
 	@Autowired
 	private DailySummaryDao dailySummaryDao;  
 
+	@Autowired
+	private OutageDao outageDao;  
+
 	@GetMapping("/dailySummary")
 	public DailySummaryResults getDailySummary(
-			@RequestParam(name="startDate", required=false) LocalDate startDate,
-			@RequestParam(name="endDate", required=false) LocalDate endDate) {
+			@RequestParam(name="startDate", required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(name="endDate", required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 		if( Objects.isNull(startDate)) {
 			startDate = LocalDate.now().minusMonths(1);
 		}
@@ -43,7 +49,7 @@ public class ApiController {
 			endDate = LocalDate.now();
         }
 		
-        LOG.info("getting daily smmery from {} to {}", startDate, endDate);
+        LOG.info("Getting daily summary date from {} to {}", startDate, endDate);
         DailySummaryResults results = new DailySummaryResults();
         results.setStartDate(startDate);
         results.setEndDate(endDate);
@@ -53,4 +59,12 @@ public class ApiController {
 
 		return results;
 	}
+
+	@GetMapping("/outage")
+	public Iterable<Outage> getOutagesForDate(@RequestParam(name="date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        LOG.info("Getting outages for {}", date);
+        
+        return outageDao.findByDate(date);
+	}
+
 }
