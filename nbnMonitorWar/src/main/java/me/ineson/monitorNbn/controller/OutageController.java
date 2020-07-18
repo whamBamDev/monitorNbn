@@ -92,14 +92,7 @@ public class OutageController {
 			    if( Objects.nonNull(file) && Objects.nonNull(outage.getStartFilePosition()) && Objects.nonNull(outage.getNumberOfLines())) {
 			    	try {
 						file.seek(outage.getStartFilePosition().longValue());
-						
-						List<String>lines = file.getLines(outage.getNumberOfLines().intValue());
-						List<String>formattedLines = new ArrayList<>();
-						for (String line : lines) {
-							formattedLines.add(line + "\n");
-						}
-						outageResult.setTestOutput(formattedLines);
-//						outageResult.setTestOutput(file.getLines(outage.getNumberOfLines().intValue()));
+						outageResult.setTestOutput(file.getLines(outage.getNumberOfLines().intValue()));
 					} catch (IOException e) {
 						LOG.error("Problem reading file {}, reading from postion {}, {} lines",
 								datafile, outage.getStartFilePosition(), outage.getNumberOfLines(), e);

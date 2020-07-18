@@ -34,13 +34,13 @@ public class FileReader implements Closeable {
 		do {
 			long startfilePosition = file.getFilePointer();
 			String nextLine = file.readLine();
-			if( Objects.isNull( nextLine)) {
+			if (Objects.isNull(nextLine)) {
 				return null;
 			}
 			
 			lineCount++;
 			
-			if(Objects.isNull(sectionLines)) {
+			if (Objects.isNull(sectionLines)) {
 				if( isStartOfTestBlock(nextLine)) {
 					sectionLines = new ArrayList<>();
 					sectionLines.add(nextLine);
@@ -52,7 +52,7 @@ public class FileReader implements Closeable {
 			} else {
 				sectionLines.add(nextLine);
 				
-				if( isEndOfTestBlock(nextLine)) {
+				if (isEndOfTestBlock(nextLine)) {
 					testSection.setLastLineNumber(lineCount);
 				}
 			}
@@ -71,30 +71,28 @@ public class FileReader implements Closeable {
 	}
 
     public List<String> getLines(int count) throws IOException {
-    	List<String> lines = new ArrayList<String>(count);
-    	for (int i = 0; i < count; i++) {
-    		lines.add(getLine());
-			
-		}
+        List<String> lines = new ArrayList<String>(count);
+        for (int i = 0; i < count; i++) {
+            lines.add(getLine());
+        }
         return lines;
 	}
 
-	public void close() throws IOException {
-		if( file != null) {
-		    RandomAccessFile temp = file;
-		    file = null;
-		    temp.close();
-		}
-	}
+    public void close() throws IOException {
+        if( file != null) {
+            RandomAccessFile temp = file;
+            file = null;
+            temp.close();
+        }
+    }
 
 	
     static boolean isStartOfTestBlock( String line) {
-		return ! Objects.isNull(line) && line.startsWith("==== start"); 
-	}
+        return ! Objects.isNull(line) && line.startsWith("==== start"); 
+    }
 
     static boolean isEndOfTestBlock( String line) {
-		return ! Objects.isNull(line) && line.startsWith("==== end"); 
-	}
-	
-	
+        return ! Objects.isNull(line) && line.startsWith("==== end"); 
+    }
+
 }
