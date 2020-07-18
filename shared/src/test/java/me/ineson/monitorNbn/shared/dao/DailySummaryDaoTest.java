@@ -63,6 +63,7 @@ class DailySummaryDaoTest {
     @AfterEach
     void shutdown(@Autowired MongoTemplate mongoTemplate) {
         listDbContents("After", mongoTemplate);
+        datasourceManager.close();
     }
 
     void listDbContents(String comment, MongoTemplate mongoTemplate) {

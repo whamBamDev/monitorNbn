@@ -1,4 +1,4 @@
-package me.ineson.monitorNbn.dataLoader;
+package me.ineson.monitorNbn.shared.io;
 
 import me.ineson.monitorNbn.shared.io.FileReader
 import me.ineson.monitorNbn.shared.io.TestSection
@@ -42,7 +42,7 @@ class FileReaderSpecification extends Specification {
 	def "test reading an empty data file with no results"() {
         given:
             URL testFile = Thread.currentThread().getContextClassLoader()
-			    .getResource( "me/ineson/monitorNbn/dataLoader/fileReader_empty.dat");
+			    .getResource( "me/ineson/monitorNbn/shared/io/fileReader_empty.dat");
 			FileReader fileReader = new FileReader( new File( testFile.getFile()));
               
         when:
@@ -61,7 +61,7 @@ class FileReaderSpecification extends Specification {
     def "test reading a data file with one result"() {
         given:
             URL testFile = Thread.currentThread().getContextClassLoader()
-                .getResource( "me/ineson/monitorNbn/dataLoader/fileReader_succuess.dat");
+                .getResource( "me/ineson/monitorNbn/shared/io/fileReader_succuess.dat");
             FileReader fileReader = new FileReader( new File( testFile.getFile()));
               
         when:
@@ -87,7 +87,7 @@ class FileReaderSpecification extends Specification {
     def "test reading a data file with two results"() {
         given:
             URL testFile = Thread.currentThread().getContextClassLoader()
-                .getResource( "me/ineson/monitorNbn/dataLoader/fileReader_twoResults.dat");
+                .getResource( "me/ineson/monitorNbn/shared/io/fileReader_twoResults.dat");
             System.out.println("File Found2 : " + testFile.getFile())
             FileReader fileReader = new FileReader( new File( testFile.getFile()));
               
