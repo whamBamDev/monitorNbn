@@ -80,9 +80,10 @@ public class DataFileParser {
                 if( !testSuccessful.isTestSuccessful()) {
                     dailySummary.setFailedTestCount(dailySummary.getFailedTestCount().intValue() + 1);
                 	
-                    outageFirstLineNumber = section.getFirstLineNumber();
 
                 	if(Objects.isNull(outage)) {
+                        outageFirstLineNumber = section.getFirstLineNumber();
+
                         outage = new Outage();
                         outage.setStartTime(testSuccessful.getStartTime());
                         outage.setEndTime(testSuccessful.getEndTime());

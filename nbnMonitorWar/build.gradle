@@ -11,8 +11,6 @@ buildscript {
 plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-//	id 'com.bmuschko.cargo'
-//	id 'war'
 }
 
 apply plugin: 'com.bmuschko.cargo'
@@ -37,14 +35,10 @@ dependencies {
 
 	implementation "org.mongodb:mongo-java-driver:${mongodbVersion}"
 	implementation ("org.springframework.boot:spring-boot-starter-web")
-/*	 {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
-	*/
 	implementation "org.springframework.boot:spring-boot-starter-log4j2"
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time'
-	
+
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     def cargoVersion = '1.7.10'
@@ -52,6 +46,7 @@ dependencies {
           "org.codehaus.cargo:cargo-licensed-dtds:$cargoVersion",
           "org.codehaus.cargo:cargo-ant:$cargoVersion"
 
+		  
 }
 
 cargoRunLocal.dependsOn assemble
@@ -60,9 +55,7 @@ cargoStartLocal.dependsOn assemble
 
 cargo {
 	containerId = 'tomcat8x'
-	// D:\Dev\nbnMonitor\share\output
 	deployable {
-//		file = file("$buildDir/libs/nbnMonitorWar-1.0.war")
 		context = 'nbnMonitor'
 	}
 

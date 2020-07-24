@@ -122,4 +122,48 @@ class FileReaderSpecification extends Specification {
     
     }
 
+	def "test seek and getLine success"() {
+		given:
+			URL testFile = Thread.currentThread().getContextClassLoader()
+				.getResource( "me/ineson/monitorNbn/shared/io/fileReader_lineRead.dat");
+			FileReader fileReader = new FileReader( new File( testFile.getFile()));
+			  
+		when:
+			fileReader.seek(4L);
+			String line = fileReader.getLine();
+		   
+
+		then:
+		    line == "22"
+
+		cleanup:
+			if( ! Objects.isNull( fileReader)) {
+				fileReader.close();
+			}
+	
+	}
+
+	def "test seek and getLines success"() {
+		given:
+			URL testFile = Thread.currentThread().getContextClassLoader()
+				.getResource( "me/ineson/monitorNbn/shared/io/fileReader_lineRead.dat");
+			System.out.println("File Found2 : " + testFile.getFile())
+			FileReader fileReader = new FileReader( new File( testFile.getFile()));
+			  
+		when:
+			fileReader.seek(12L);
+			def lines = fileReader.getLines(3);
+			System.out.println("Lines : " + lines)
+			
+
+		then:
+			lines == [ "44", "55", "66"];
+
+		cleanup:
+			if( ! Objects.isNull( fileReader)) {
+				fileReader.close();
+			}
+	
+	}
+
 }

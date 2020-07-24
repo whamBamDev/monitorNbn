@@ -26,12 +26,15 @@ public class UtilitiesExpression {
 	}
 
 	public String outputIterable(final Iterable<?>iterable, String lineEnd) {
+		if(Objects.isNull(iterable)) {
+			return "";
+		}
 		
 		StringBuilder stringBuilder= new StringBuilder();
 		boolean firstObject = true;
 
 		for (Object object : iterable) {
-			if(!firstObject) {
+			if(!firstObject && Objects.nonNull(lineEnd)) {
 				stringBuilder.append(lineEnd);
 			}
 			firstObject = false;
