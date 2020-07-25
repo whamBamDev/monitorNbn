@@ -104,11 +104,20 @@ x) Tomcat
 
 $ sudo apt-get install tomcat9
 
+Make the webapps directory writeable
+sudo chmod a+w /var/lib/tomcat8/webapps
+
+Deploy application
+
+$ cp /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps
+
+tail -f /var/log/tomcat8/catalina.out
+
 http://localhost:8080/nbnMonitor
 http://localhost:8080/nbnMonitor/api/dailySummary
 http://localhost:8080/nbnMonitor/api/outage?date=2020-07-04
 
-
+http://ws1:8080/nbnMonitorWar-1.0/
 
 7) 
 
