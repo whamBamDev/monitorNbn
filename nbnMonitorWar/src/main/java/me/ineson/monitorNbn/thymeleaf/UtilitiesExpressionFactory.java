@@ -10,7 +10,7 @@ import org.thymeleaf.expression.IExpressionObjectFactory;
 
 public class UtilitiesExpressionFactory implements IExpressionObjectFactory {
     
-    private static final String UTILITIES_EVALUATION_VARIABLE_NAME = "utilities";
+    static final String UTILITIES_EVALUATION_VARIABLE_NAME = "utilities";
     
     private static final Set<String> ALL_EXPRESSION_OBJECT_NAMES = Collections.unmodifiableSet(
         new HashSet<>(Arrays.asList(UTILITIES_EVALUATION_VARIABLE_NAME)));
@@ -30,7 +30,7 @@ public class UtilitiesExpressionFactory implements IExpressionObjectFactory {
 
     @Override
     public boolean isCacheable(String expressionObjectName) {
-        return expressionObjectName != null && UTILITIES_EVALUATION_VARIABLE_NAME.equals(expressionObjectName);
+        return UTILITIES_EVALUATION_VARIABLE_NAME.equals(expressionObjectName);
     }
     
 }
