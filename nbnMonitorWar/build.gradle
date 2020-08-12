@@ -39,6 +39,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time'
 
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     def cargoVersion = '1.7.10'
@@ -51,7 +53,7 @@ dependencies {
 
 cargoRunLocal.dependsOn assemble
 cargoStartLocal.dependsOn assemble
-cargoStartLocal.dependsOn assemble
+cargoRedeployLocal.dependsOn assemble
 
 cargo {
 	containerId = 'tomcat8x'
@@ -71,4 +73,9 @@ cargo {
 		}
 
 	}
+}
+
+bootRun {
+	sourceResources sourceSets.main
+	args = ["--spring.profiles.active=gradleDev"]
 }

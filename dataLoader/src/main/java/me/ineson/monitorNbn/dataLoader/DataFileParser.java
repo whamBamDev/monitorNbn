@@ -89,7 +89,7 @@ public class DataFileParser {
                         outage.setEndTime(testSuccessful.getEndTime());
                         outage.setStartFilePosition(section.getFilePosition());
                     
-                        outage.setNumberOfLines(section.getLastLineNumber() - outageFirstLineNumber);
+                        outage.setNumberOfLines(section.getLastLineNumber() - outageFirstLineNumber + 1);
                     
                         outage = outageDao.add(outage);
                         LOG.info("Added new outage {}" , outage);

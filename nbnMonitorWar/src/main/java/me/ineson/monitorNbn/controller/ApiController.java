@@ -5,8 +5,6 @@ package me.ineson.monitorNbn.controller;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.ineson.monitorNbn.model.DailySummaryResults;
 import me.ineson.monitorNbn.shared.dao.DailySummaryDao;
 import me.ineson.monitorNbn.shared.dao.OutageDao;
+import me.ineson.monitorNbn.shared.entity.DailySummary;
 import me.ineson.monitorNbn.shared.entity.Outage;
 
 /**
@@ -39,7 +37,7 @@ public class ApiController {
 	private OutageDao outageDao;  
 
 	@GetMapping("/dailySummary")
-	public DailySummaryResults getDailySummary(
+	public Iterable<DailySummary> getDailySummary(
 			@RequestParam(name="startDate", required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(name="endDate", required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 		if( Objects.isNull(startDate)) {
@@ -50,14 +48,7 @@ public class ApiController {
         }
 		
         LOG.info("Getting daily summary date from {} to {}", startDate, endDate);
-        DailySummaryResults results = new DailySummaryResults();
-        results.setStartDate(startDate);
-        results.setEndDate(endDate);
-        results.setResults( StreamSupport.stream(dailySummaryDao.findByDateRange(startDate, endDate)
-                .spliterator(), false)
-                .collect(Collectors.toList()));
-
-		return results;
+        return dailySummaryDao.findByDateRange(startDate, endDate);
 	}
 
 	@GetMapping("/outage")
