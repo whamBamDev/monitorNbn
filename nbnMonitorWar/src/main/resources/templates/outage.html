@@ -4,49 +4,313 @@
     <title th:text="'Daily Outages for ' + ${date}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <link href="css/nbnMonitor.css" rel="stylesheet">
-<!-- 
-    <link href="https://unpkg.com/tabulator-tables@4.7.1/dist/css/tabulator.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/tabulator-tables@4.7.1/dist/css/bulma/tabulator_bulma.min.css" rel="stylesheet">
+    <!--  Polyfills required for tabulator to run under IE11 -->
+    <script th:src="@{external/promise-polyfill/8.1.3/polyfill.min.js}"></script>
+    <script th:src="@{external/whatwg-fetch/3.4.0/fetch.umd.min.js}"></script>
+    
+    <link th:href="@{external/tabulator-tables/4.7.1/css/tabulator.min.css}" rel="stylesheet" />
+    <link th:href="@{external/tabulator-tables/4.7.1/css/tabulator_bulma.min.css}" rel="stylesheet" />
 
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.7.1/dist/js/tabulator.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/moment@2.27.0/min/moment.min.js"></script>
+    <script th:src="@{external/tabulator-tables/4.7.1/js/tabulator.min.js}"></script>
+    <script th:src="@{external/moment/2.27.0/js/moment.min.js}"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
- -->
+    <link th:href="@{external/jquery/ui/1.12.1/themes/pepper-grinder/jquery-ui.css}" rel="stylesheet" />
 
+    <script th:src="@{external/jquery/1.12.4/jquery-1.12.4.min.js}"></script>
+    <script th:src="@{external/jquery/ui/1.12.1/jquery-ui.min.js}"></script>
+    
+    <script th:src="@{external/moment/2.27.0/js/moment.min.js}"></script>
+    <script th:src="@{external/humanizeDuration/3.23.1/humanizeDuration.js}"></script>
+
+    <script th:src="@{external/chart.js/2.9.3/Chart.min.js}"></script>
+
+    <link th:href="@{css/nbnMonitor.css}" rel="stylesheet" />
+    
 </head>
 <body>
+
   <p th:text="'Date: ' + ${dailySummary.date}"/>
-  <p th:text="'File: ' + ${dailySummary.datafile}"/>
+  <p>
+    File: 
+    <span th:if="${!consoleLogExists}"  th:text="${dailySummary.datafile}"></span> 
+    <a th:if="${consoleLogExists}" th:href="@{outage/file(date=${date})}"><span th:text="${dailySummary.datafile}"></span></a> 
+    
+  </p>
   <p th:text="'Number of Outages: ' + ${dailySummary.outageCount}"/>
   <p th:text="'Number of tests perfomed: ' + ${dailySummary.testCount} "/>
 
-  <div>
-    <table>
-      <tr>
-        <th>Start</th>
-        <th>End</th>
-        <th>Duration</th>
-        <th>File start postion</th>
-        <th>No of lines</th>
-        <th>&nbsp;</th>
-      </tr>
-      <th:block th:each="outage : ${outages}">
-        <tr>
-          <td th:text="${#temporals.format(outage.outage.startTime, 'HH:mm:ss')}"></td>
-          <td th:text="${#temporals.format(outage.outage.endTime, 'HH:mm:ss')}">--:--:--</td>
-          <td th:text="${#utilities.format(outage.duration)}">--:--:--</td>
-          <td th:text="${outage.outage.startFilePosition}">0</td>
-          <td th:text="${outage.outage.numberOfLines}">0</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td colspan="6"><pre th:text="${#utilities.outputIterable(outage.testOutput)}"></pre></td>
-        </tr>
-      </th:block>
-    </table>
+  <div style="width:1000px">
+    <canvas id="chart1"></canvas>
   </div>
+  <div id="outages-table"></div>
+  <script th:inline="javascript">
 
+      /*<![CDATA[*/
+         var outages = /*[[${outages}]]*/;
+         var outageData = /*[[${outageData}]]*/;
+         var outageDate = /*[[${date}]]*/;
+       /*]]>*/
+  </script>
+  <script type="text/javascript">
+
+  function openOutageDetailPage(startDateTime) {
+		  $.ajax({url: "api/outage/" + startDateTime + "/log", success: function(result){
+		    //$("#consoleLogOutput").html("");
+            $("#consoleLogOutput").empty();
+            if(result) {
+            	var logOutput = "";
+            	for (i = 0; i < result.length; i++) {
+                    logOutput += result[i] + "\n";
+           		}
+                $("#consoleLogOutput").text(logOutput);
+            }
+		    $('.coDialog').dialog({
+                title: "Test console log",
+                modal: true,
+                draggable:false,
+                resizable:false,
+                show: 'fade', 
+                hide: 'fade',
+                width: '95%',
+                height: ($(window).height() - 40)
+            });
+
+		  }});
+    }
+  
+	var ctx = document.getElementById('chart1').getContext('2d');
+	ctx.canvas.width = 1000;
+	ctx.canvas.height = 130;
+
+	var cfg = {
+        type: 'bar',
+		data: {
+			datasets: [{
+				label: 'Outages for ' + outageDate,
+				backgroundColor: "red",
+				borderColor: "red",
+				data: outageData,
+				type: 'bar',
+				pointRadius: 0,
+				fill: false,
+				lineTension: 0,
+				borderWidth: 2
+			}]
+		},
+		options: {
+			animation: {
+				duration: 0
+			},
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+	                    unit: 'hour'
+					},
+					distribution: 'linear',
+					offset: true,
+//					bounds: 'data',
+					ticks: {
+//                        major: {
+//                            enabled: true,
+//                            fontStyle: 'bold'
+//                        },
+                        source: 'data',
+                        autoSkip: true,
+                        autoSkipPadding: 56,
+//                        minRotation: 0,
+//                        maxRotation: 0,
+//                        min: outageData[0].t,
+//                        max: outageData[outageData.length-1].t,
+                        stepSize: 60,
+					},
+/*					
+					ticks: {
+                        source: 'data',
+                        stepSize: 60,
+
+						
+						major: {
+							enabled: true,
+							fontStyle: 'bold'
+						},
+						source: 'data',
+						autoSkip: true,
+						autoSkipPadding: 75,
+						maxRotation: 0,
+						sampleSize: 100
+					},
+					afterBuildTicks: function(axis, ticks) {
+                        //console.log(axis);
+						
+						var majorUnit = 'hour';
+						var firstTick = ticks[0];
+						var i, ilen, val, tick, currMajor, lastMajor;
+                        //var newticks [];
+                        //console.log(scale.n.ticks);
+                        console.log(axis.ticks);
+						val = moment(ticks[0].value);
+						if ((majorUnit === 'minute' && val.second() === 0)
+								|| (majorUnit === 'hour' && val.minute() === 0)
+								|| (majorUnit === 'day' && val.hour() === 9)
+								|| (majorUnit === 'month' && val.date() <= 3 && val.isoWeekday() === 1)
+								|| (majorUnit === 'year' && val.month() === 0)) {
+	                        console.log("First - set major");
+							firstTick.major = true;
+						} else {
+                            console.log("First - set minor");
+							firstTick.major = false;
+						}
+
+						lastMajor = val.get(majorUnit);
+						
+						for (i = 1, ilen = ticks.length; i < ilen; i++) {
+							var tick = ticks[i];
+	                        console.log(i,tick.label,tick);
+							val = moment(tick.value);
+							currMajor = val.get(majorUnit);
+							tick.major = currMajor !== lastMajor;
+                            ticks[i].major = currMajor !== lastMajor;
+                            if( currMajor == lastMajor) {
+                                //console.log(i,"delete");
+                                if(tick._index) tick._index = undefined;
+                                if(tick._label) tick.label = undefined;
+                                //ticks[i] = newTick;
+                            } else {
+                                tick._index = i;
+                                tick.label = 'x';
+                                ticks[i]._index = i;
+                                //tick.set("label","x");
+                            }
+                            console.log(i,tick.label, tick,ticks[i].label, ticks[i]);
+							lastMajor = currMajor;
+						}
+                        console.log(ticks[1440].label, ticks[1440]);
+                        console.log(ticks[1440].keys);
+                        console.log(ticks);
+						return ticks;
+					}
+	                    */
+                    
+				}],
+				yAxes: [{
+					gridLines: {
+						drawBorder: false
+					},
+					scaleLabel: {
+						display: true,
+						labelString: 'Outage'
+					},
+
+                    ticks: {
+                    	display: false,
+                        autoSkip: true,
+                        min: 0,
+                        max: 1,
+                        stepSize: 1
+                    },
+
+				}]
+			},
+			tooltips: {
+				intersect: false,
+				mode: 'index',
+				callbacks: {
+					label: function(tooltipItem, myData) {
+						var label = 'Outage started at ';
+						var tooltipData = myData.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].tooltipData;
+
+						if(tooltipData && tooltipData.startTime) {
+							var startTime = moment(tooltipData.startTime).format("LTS");
+							label += startTime + " and lasted for " + humanizeDuration(tooltipData.duration);
+						}
+						return label;
+					}
+				}
+			}
+		}
+	};
+
+	var chart = new Chart(ctx, cfg);
+
+    document.getElementById("chart1").onclick = function(evt) {   
+        var activePoints = chart.getElementsAtEvent(evt);
+
+        if(activePoints.length > 0)
+        {
+          //get the internal index of slice in pie chart
+          var clickedElementindex = activePoints[0]["_index"];
+
+          //get value by index      
+          var value = chart.data.datasets[0].data[clickedElementindex];
+
+          if(value && value.tooltipData) {
+              /* other stuff that requires slice's label and value */
+              var startTime = moment(value.tooltipData.startTime).toISOString(true);
+              console.log(startTime);
+
+              openOutageDetailPage(startTime);
+          }
+       }
+    }    
+
+	function durationFormatter(cell, formatterParams, onRendered) {
+		var inputMultiplier = formatterParams.inputMultiplier || 1;
+        var humanizeParams = formatterParams.humanizeParams;
+        var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
+        var value = cell.getValue();
+
+        var result = invalid; 
+        if (value) {
+        	if(humanizeParams) {
+                result = humanizeDuration(value * inputMultiplier, humanizeParams);
+        	} else {
+                result = humanizeDuration(value * inputMultiplier);
+        	}
+        }
+        
+        return result;
+    }
+
+    for (i = 0; i < outages.length; i++) {
+        outages[i].image =  "images/log.png";
+    }
+
+	//create Tabulator on DOM element with id "example-table"
+    var table = new Tabulator("#outages-table", {
+      data: outages,
+      height:400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+      layout:"fitDataFill", //fit columns to width of table (optional)
+      columns:[ //Define Table Columns
+    	  {title: "No.", field: "outage", formatter:"rownum"},
+          {title:"Start Time", field:"outage.startTime", hozAlign:"right",
+        	  formatter:"datetime", formatterParams:{
+                 inputFormat: moment.DATETIME_LOCAL_SECONDS,
+                 outputFormat: "HH:mm:ss",
+                 invalidPlaceholder:"(invalid date)"}},
+          {title:"End time", field:"outage.endTime", hozAlign:"right",
+              formatter:"datetime", formatterParams:{
+                 inputFormat: moment.DATETIME_LOCAL_SECONDS,
+                 outputFormat: "HH:mm:ss",
+                 invalidPlaceholder:"(invalid date)"}},
+          {title:"Duration", field:"duration", hozAlign:"right",
+              formatter: durationFormatter, formatterParams:{
+            	  inputMultiplier: 1000,	  
+            	  humanizeParams: { round: true },
+                  invalidPlaceholder:"(invalid duration)"}},
+          {title:"View log", field:"image", hozAlign:"center", formatter:"image", formatterParams:{
+        	    height:"25px",
+        	    width:"20px"
+        	}}      ],
+      rowClick:function(e, row){ //trigger an alert message when the row is clicked
+          openOutageDetailPage(row.getData().outage.startTime);
+      },
+    });    
+	
+  </script>
+  <div class="coDialog">
+            <pre id="consoleLogOutput"></pre>
+</div>
+  
 </body>
 </html>

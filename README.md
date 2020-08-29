@@ -175,7 +175,7 @@ Server at localhost:27017 reports wire version 0, but this version of the driver
 
 Build
 
-$ gradle bootRun  -x test
+$ gradle -x test bootRun
 
-$ gradle assemble --continuous -x test
+$ gradle -x test assemble --continuous
 

@@ -1,8 +1,11 @@
 
 
-.tabulator{
+.tabulator {
     width:700px;
 }
 
 
-
+.coDialog {
+            overflow: auto;
+            display: none;
+        }
