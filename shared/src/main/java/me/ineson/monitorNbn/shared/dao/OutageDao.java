@@ -85,6 +85,10 @@ public class OutageDao {
 		return count;
 	}
 
+	public Outage find(LocalDateTime startDate) {
+        return createCollection().find(eq(KEY_FIELD, startDate)).first();
+	}
+
 	public Iterable<Outage> findByDate(LocalDate date) {
 		LocalDateTime startTime = date.atStartOfDay();
         return createCollection()

@@ -6,6 +6,7 @@ package me.ineson.monitorNbn.shared.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -29,8 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.mongodb.client.MongoCollection;
 
-import me.ineson.monitorNbn.shared.dao.DatasourceManager;
-import me.ineson.monitorNbn.shared.dao.OutageDao;
 import me.ineson.monitorNbn.shared.entity.Outage;
 
 /**
@@ -156,6 +155,64 @@ class OutageDaoTest {
         assertEquals(Integer.valueOf(512), returnedRecord.getNumberOfLines());
         
         LOG.info("returnedOutage: {}", returnedRecord);
+    }
+
+    @Test
+    @DisplayName("Test find success")
+    void testFindSuccess() {
+
+        // Given: Save a couple of record on different dates.
+        Outage outage = new Outage();
+        LocalDateTime startTime = LocalDateTime.parse("2020-08-12T13:22:56");
+        outage.setNumberOfLines(25);
+        outage.setStartFilePosition(12345L);
+        outage.setStartTime(startTime);
+        outage.setEndTime(startTime.plusMinutes(3L));
+        dao.add(outage);
+
+        outage = new Outage();
+        outage.setNumberOfLines(1);
+        outage.setStartFilePosition(5L);
+        outage.setStartTime(startTime.plusMinutes(4L));
+        outage.setEndTime(startTime.plusMinutes(7L));
+        dao.add(outage);
+
+        // When: Find by the date/time of the first saved record.
+        Outage searchResult = dao.find(startTime);
+
+        // Then: One record is returned
+        assertNotNull(searchResult);
+
+        // and the return record is the first one that was saved.
+        LOG.debug("returnedOutage: {}", searchResult);
+        assertEquals(Integer.valueOf(25), searchResult.getNumberOfLines());
+    }
+    
+    @Test
+    @DisplayName("Test find record not found returns null")
+    void testFindNotFoundReturnNull() {
+
+        // Given: Save a couple of record on different dates.
+        Outage outage = new Outage();
+        LocalDateTime startTime = LocalDateTime.parse("2020-08-12T13:22:56");
+        outage.setNumberOfLines(25);
+        outage.setStartFilePosition(12345L);
+        outage.setStartTime(startTime);
+        outage.setEndTime(startTime.plusMinutes(3L));
+        dao.add(outage);
+
+        outage = new Outage();
+        outage.setNumberOfLines(1);
+        outage.setStartFilePosition(5L);
+        outage.setStartTime(startTime.plusMinutes(4L));
+        outage.setEndTime(startTime.plusMinutes(7L));
+        dao.add(outage);
+
+        // When: Find by the date/time of the first saved record.
+        Outage searchResult = dao.find(startTime.minusMinutes(2L));
+
+        // Then: no record found, null returned.
+        assertNull(searchResult);
     }
 
     @Test
