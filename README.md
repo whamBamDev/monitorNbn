@@ -1,3 +1,7 @@
+# NBN Monitoring
+
+
+![Hardware](doco/hardwareSetup.png)
 
 
 To configure the PI
@@ -166,7 +170,13 @@ D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to down
 7) Then create the VM
 vagrant up
 
+8) deploy to Tomcat
 
+sudo rm -Rf /var/lib/tomcat8/webapps/ROOT
+
+ cp -v /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps/ROOT.war
+  378  tail -f /var/log/tomcat8/catalina.out
+  378  tail -f /var/log/tomcat8/catalina.out
 
 
 
@@ -179,3 +189,12 @@ $ gradle -x test bootRun
 
 $ gradle -x test assemble --continuous
 
+http://localhost:8080
+
+
+$ gradle cargoStartLocal
+$ tail -50f build/output.log
+
+http://localhost:8080/nbnMonitor/
+
+$ gradle cargoRedeployLocal
