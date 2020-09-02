@@ -17,7 +17,7 @@ Steps taken to configure the PI server.
 
 #### 1) Updates
 
-Make sure that we are fully up to date ().
+Make sure that we are fully up to date.
 ```Bash
 $ sudo apt update
 $ sudo apt full-upgrade
@@ -36,7 +36,7 @@ $ sudo vi /etc/hosts
 127.0.1.1	ws1
 ```    
     
-3) Enable remote connections
+#### 3) Enable remote connections
 
 Not critical for the application, just makes life easier.
 
@@ -44,14 +44,14 @@ From main menu->Preferences->Raspberry Pi Configuration
 
 In the configuration dialog select then Interfaces tab, then enable both SSH and VNC.
 
-4) Change PI default screen resolution
+#### 4) Change PI default screen resolution
 
 Advanced Options > Resolution, and choose an option.
 '''
 hdmi_mode=85
 '''
 
-5) Install and Configure Samba
+#### 5) Install and Configure Samba
 
 Samba is used for exposing a network drive that is used for transferring files.
 
@@ -93,7 +93,7 @@ Restart the service to pick up the new configuration.
 sudo systemctl restart smbd
 ```
 
-6) Downgrade to Java8
+#### 6) Downgrade to Java8
 
 The default is Java9 which does not run on on my model of PI, when attempting to run the the
 following error message is displayed "Server VM is only supported on ARMv7+ VFP"
@@ -120,7 +120,7 @@ Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
 Java HotSpot(TM) Client VM (build 25.231-b11, mixed mode)
 ```
 
-7) Install MongoDb
+#### 7) Install MongoDb
 
 ```Bash
 $ sudo apt-get install mongodb
@@ -133,7 +133,7 @@ bind_ip = 0.0.0.0
 $ sudo service mongodb restart
 ```
 
-8) Install Tomcat
+#### 8) Install Tomcat
 
 ```Bash
 $ sudo apt-get install tomcat8
@@ -145,8 +145,75 @@ Make the webapps directory writeable ready for deployments.
 $ sudo chmod a+w /var/lib/tomcat8/webapps
 ```
   
+## Configure Development Environment
+
+#### 1) Installs
+
+Install the following;
+*Virtual Box
+*Vagrant
+
+#### 2) Code
+
+Checkout code from <https://github.com/whamBamDev/monitorNbn.git> to under a local folder, e.g. `D:\Dev\monitorNbn` (the code cloned out to folder `D:\Dev\monitorNbn\monitorNbn`.
+
+#### 3) Vagrant Setup
+
+Install vagrant plugin vbguest
+
+```Bash
+$ cd D:\Dev\monitorNbn\monitorNbn\vagrantDevBox
+$ vagrant plugin install vagrant-vbguest
+```
+
+Under D:\Dev\monitorNbn\monitorNbn\vagrantDevBox copy file localConfig.rb.example to localConfig.rb.
+Edit and update the directory parameter to development area.
+   HOST_DEV_DIR = 'D:/Dev/monitorNbn'
+
+#### 4)
+
+Create the following folders;
+* `D:\Dev\monitorNbn\installDownload`
+* `D:\Dev\monitorNbn\share`
+
+#### 5) Java install
+Download Oracle JDK version 8u241 (Linux x64 RPM - filebname jdk-8u241-linux-x64.rpm) and put under 
+D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to download Java8 using from within a vagrant script 
+(was done using wget).
+
+#### 6) Start VM
+
+Then create and start the VM
+```Bash
+$ vagrant up
+```
 
 
+#### 7) Build
+
+Build
+
+$ gradle -x test bootRun
+
+$ gradle -x test assemble --continuous
+
+http://localhost:8080
+
+
+$ gradle cargoStartLocal
+$ tail -50f build/output.log
+
+http://localhost:8080/nbnMonitor/
+
+$ gradle cargoRedeployLocal
+
+
+
+
+
+
+
+----
 
 
 4) Install MongoDb
@@ -210,31 +277,6 @@ dt=$(date --date yesterday "+%a %d/%m/%Y")
 
 $ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
 
-## Configure Development Environment
-
-1) Install the following;
-Virtual Box
-Vagrant
-
-2) checkout code from https://github.com/whamBamDev/monitorNbn.git to under a local folder, e.g. D:\Dev\monitorNbn (the code cloned out to folder "D:\Dev\monitorNbn\monitorNbn".
-
-3) Install vagrant plugin vbguest 
-$ vagrant plugin install vagrant-vbguest
-
-4) Under D:\Dev\monitorNbn\monitorNbn\vagrantDevBox copy file localConfig.rb.example to localConfig.rb.
-Edit and update the directory parameter to development area.
-   HOST_DEV_DIR = 'D:/Dev/monitorNbn'
-
-5) Create the following folders;
-D:\Dev\monitorNbn\installDownload
-D:\Dev\monitorNbn\share
-
-6) Download Oracle JDK version 8u241 (Linux x64 RPM - filebname jdk-8u241-linux-x64.rpm) and put under 
-D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to download Java8 using from within a vagrant script 
-(using wget).
-
-7) Then create the VM
-vagrant up
 
 8) deploy to Tomcat
 
@@ -248,19 +290,3 @@ sudo rm -Rf /var/lib/tomcat8/webapps/ROOT
 
 Server at localhost:27017 reports wire version 0, but this version of the driver requires at least 2 (MongoDB 2.6).
 
-
-Build
-
-$ gradle -x test bootRun
-
-$ gradle -x test assemble --continuous
-
-http://localhost:8080
-
-
-$ gradle cargoStartLocal
-$ tail -50f build/output.log
-
-http://localhost:8080/nbnMonitor/
-
-$ gradle cargoRedeployLocal
