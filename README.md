@@ -24,18 +24,18 @@ $ sudo apt full-upgrade
 $ sudo apt autoremove
 $ sudo apt clean
 ```
-  
-  
+
+
 #### 2) Configure hostname  
 
 Configured a known host name for easier access on the private network. Need to add the name to hostname file, plus add a hostename reference in the hosts file;
-```Bash  
+```Bash
 $ sudo vi /etc/hostname
 ws1
 $ sudo vi /etc/hosts
 127.0.1.1	ws1
-```    
-    
+```
+
 #### 3) Enable remote connections
 
 Not critical for the application, just makes life easier.
@@ -74,7 +74,6 @@ Next add a mount point (at the end of the file) that can be used for uploading a
 ```Bash
 $ mkdir -p /home/pi/monitorNbn/share
 $ sudo vi /etc/samba/smb.conf
-netbios name = ws1
 [monitorNbnShare]
    path = /home/pi/monitorNbn/share
    browseable = yes
@@ -95,8 +94,7 @@ sudo systemctl restart smbd
 
 #### 6) Downgrade to Java8
 
-The default is Java9 which does not run on on my model of PI, when attempting to run the the
-following error message is displayed "Server VM is only supported on ARMv7+ VFP"
+The default is Java9 is instlled, this does not run on on my model of PI. When attempting to run the the following error message is displayed "Server VM is only supported on ARMv7+ VFP"
 
 ```Bash
 $ sudo apt-get remove openjdk*
@@ -150,8 +148,8 @@ $ sudo chmod a+w /var/lib/tomcat8/webapps
 #### 1) Installs
 
 Install the following;
-*Virtual Box
-*Vagrant
+* Virtual Box
+* Vagrant
 
 #### 2) Code
 
