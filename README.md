@@ -15,7 +15,7 @@ The software side of the application is broken down into three components. The f
 
 Steps taken to configure the PI server.
 
-1) Updates
+#### 1) Updates
 
 Make sure that we are fully up to date ().
 ```Bash
@@ -26,7 +26,7 @@ $ sudo apt clean
 ```
   
   
-2) Configure hostname  
+#### 2) Configure hostname  
 
 Configured a known host name for easier access on the private network. Need to add the name to hostname file, plus add a hostename reference in the hosts file;
 ```Bash  
