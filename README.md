@@ -1,7 +1,7 @@
 # NBN Monitoring
 ## Introduction
 
-Application for the monitoring of Inetnet/WAN connections checking the connection is up and running and the internet can be accessed.
+Application for the monitoring of Internet/WAN connections checking the connection is up and running and the internet can be accessed.
 
 ## Solution
 
@@ -11,20 +11,34 @@ The hardware being used for this an old Raspberry Pi I have lying about. Connect
 
 The software side of the application is broken down into three components. The first performs monitoring of the internet connection by performing TCP traceroute and ping tests, and grabs the status from the modem. This monitoring is written to a flat file. The second component reads and parses the monitoring date from the flat file and saves to a MongoDb database. The third component are the screens, a J2EE WAR with a couple of screens accessing the monitoring results from the database.
 
-## Pi Configuration
+## Raspberry Pi Configuration
 
 To configure the PI
 
-Before starting then : $ sudo apt update
+1) Updates  
+
+```Bash
+$ sudo apt update
 $ sudo apt full-upgrade
 $ sudo apt autoremove
 $ sudo apt clean
-https://www.raspberrypi.org/documentation/raspbian/updating.md
+```
+  
+  
+2) Configure hostname  
+
+```Bash  
+$ sudo vi /etc/hostname
+$ sudo vi /etc/hosts
+```    
+    
+3) ddscs
+
+  
+  
+2) 
 
 
-1) Configue hostname
-   $ sudo vi /etc/hostname
-   $ sudo vi /etc/hosts
 
 2) Enable remote connections
 
