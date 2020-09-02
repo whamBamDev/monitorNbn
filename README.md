@@ -13,10 +13,11 @@ The software side of the application is broken down into three components. The f
 
 ## Raspberry Pi Configuration
 
-To configure the PI
+Steps taken to configure the PI server.
 
-1) Updates  
+1) Updates
 
+Make sure that we are fully up to date ().
 ```Bash
 $ sudo apt update
 $ sudo apt full-upgrade
@@ -27,81 +28,129 @@ $ sudo apt clean
   
 2) Configure hostname  
 
+Configured a known host name for easier access on the private network. Need to add the name to hostname file, plus add a hostename reference in the hosts file;
 ```Bash  
 $ sudo vi /etc/hostname
+ws1
 $ sudo vi /etc/hosts
+127.0.1.1	ws1
 ```    
     
-3) ddscs
+3) Enable remote connections
 
-  
-  
-2) 
-
-
-
-2) Enable remote connections
+Not critical for the application, just makes life easier.
 
 From main menu->Preferences->Raspberry Pi Configuration
 
 In the configuration dialog select then Interfaces tab, then enable both SSH and VNC.
 
-3) Chanhge PI default screen resolution
+4) Change PI default screen resolution
 
- Advanced Options > Resolution, and choose an option.
-
+Advanced Options > Resolution, and choose an option.
+'''
 hdmi_mode=85
+'''
 
+5) Install and Configure Samba
 
-2) Samba
+Samba is used for exposing a network drive that is used for transferring files.
 
-First read: https://www.raspberrypi.org/documentation/remote-access/samba.md
+Useful doco to read: <https://www.raspberrypi.org/documentation/remote-access/samba.md>
 
-sudo apt install samba samba-common-bin
+```Bash
+$ sudo apt install samba samba-common-bin
+$ sudo apt install samba samba-common-bin smbclient cifs-utils
+```
 
-sudo apt install samba samba-common-bin smbclient cifs-utils
+First configure the netbios name.
 
+```Bash
+$ sudo vi /etc/samba/smb.conf
+netbios name = ws1
+```
 
+Next add a mount point (at the end of the file) that can be used for uploading and downloading files.
+
+```Bash
+$ mkdir -p /home/pi/monitorNbn/share
+$ sudo vi /etc/samba/smb.conf
+netbios name = ws1
+[monitorNbnShare]
+   path = /home/pi/monitorNbn/share
+   browseable = yes
+   guest ok = yes
+   guest account = pi
+   read only = no
+   create mask = 0777
+   directory mask = 0777
+   public = yes
+   writeable = yes
+```
+
+Restart the service to pick up the new configuration.
+
+```Bash
 sudo systemctl restart smbd
+```
 
-3) Downgrade to Java8
+6) Downgrade to Java8
+
 The default is Java9 which does not run on on my model of PI, when attempting to run the the
 following error message is displayed "Server VM is only supported on ARMv7+ VFP"
 
-
+```Bash
 $ sudo apt-get remove openjdk*
 $ sudo apt-get autoremove
 $ tar -xvf jdk-8u231-linux-arm32-vfp-hflt.tar.gz
-
 $ sudo update-alternatives --install /usr/bin/java java /home/pi/Apps/java/jdk1.8.0_231/bin/java 1
 $ sudo update-alternatives --set java /home/pi/Apps/java/jdk1.8.0_231/bin/java
-
+$ vi ~/.profile
 export JAVA_HOME="/home/pi/Apps/java/jdk1.8.0_231"
 export PATH="$JAVA_HOME/bin:$PATH"
-
-
 $ sudo update-alternatives --install /usr/bin/java java /home/pi/Apps/java/jdk1.8.0_231/bin/java 1
 $ sudo update-alternatives --set java /home/pi/Apps/java/jdk1.8.0_231/bin/java
+```
 
+And test the update is successful.
 
-jdk1.8.0_231
+```Bash
+$ java -version
+java version "1.8.0_231"
+Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
+Java HotSpot(TM) Client VM (build 25.231-b11, mixed mode)
+```
 
+7) Install MongoDb
 
-4) Install MongoDb
-
+```Bash
 $ sudo apt-get install mongodb
-
 $ service mongodb status
-
 $ sudo vi /etc/mongodb.conf
-
 Update the bind ip to 0.0.0.0, e.g.
 bind_ip = 0.0.0.0
 #bind_ip = 127.0.0.1
 #port = 27017
-
-
 $ sudo service mongodb restart
+```
+
+8) Install Tomcat
+
+```Bash
+$ sudo apt-get install tomcat8
+```
+
+Make the webapps directory writeable ready for deployments.
+
+```Bash
+$ sudo chmod a+w /var/lib/tomcat8/webapps
+```
+  
+
+
+
+
+4) Install MongoDb
+
 Useful commands;
 
 > show dbs
@@ -127,12 +176,6 @@ find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name
 
 
 
-x) Tomcat
-
-$ sudo apt-get install tomcat9
-
-Make the webapps directory writeable
-sudo chmod a+w /var/lib/tomcat8/webapps
 
 Deploy application
 
