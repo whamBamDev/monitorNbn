@@ -94,7 +94,7 @@ sudo systemctl restart smbd
 
 #### 6) Downgrade to Java8
 
-The default is Java9 is instlled, this does not run on on my model of PI. When attempting to run the the following error message is displayed "Server VM is only supported on ARMv7+ VFP"
+The default is Java9 is installed, this does not run on on my model of PI. When attempting to run the the following error message is displayed "Server VM is only supported on ARMv7+ VFP"
 
 ```Bash
 $ sudo apt-get remove openjdk*
@@ -195,7 +195,7 @@ $ cd master
 $ gradle clean build
 ```
 
-For developing the ui (the nbnonitorWar module) the application can be run as a Spring Boot application or deployed under Tomcat. For development then it is quickest to use Spring Boot as running with DevTools. Tomcat is used as a final test before deploying onto the Rapsberry Pi.
+For developing the UI (the nbnonitorWar module) the application can be run as a Spring Boot application or deployed under Tomcat. For development then it is quickest to use Spring Boot as running with DevTools. Tomcat is used as a final test before deploying onto the Rapsberry Pi.
 
 So to run under Spring Boot then pen two command line windows. In the first window run Spring Boot.
 
@@ -232,94 +232,93 @@ $ gradle cargoRedeployLocal
 ```
 
 
-
-
 ## Deployment on Raspberry Pi
 
-## Upload Code
+#### 1) Upload Code
 
-Create Folders
+Login into the PI and create the following folders;
+* `/home/pi/monitorNbn/share`
+* `/home/pi/monitorNbn/share/output`
 
+To start then upload the code that tests the connection, plus code that save the data to the database. The
+instructions for UI are later on.
 
-## Cron Jobs
+The first artefacts to deploy is `modemStatus-001.zip`, upload to `/home/pi/monitorNbn/share` and extract  to `/home/pi/monitorNbn/share/modemStatus-001`. Also upload the file `NbnConnection.sh` to `/home/pi/monitorNbn/share.
 
-{
+The first artefact to deploy is `dataLoader-1.0.zip`, upload to `/home/pi/monitorNbn/share`and extract  to `/home/pi/monitorNbn/share/dataLoader`.
 
-Manual load of data.
+#### 2) Cron Jobs
 
-```Bash
-$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
-```
+To start monitoring and saving the data to the database then add the following two cron jobs.
 
-Manual load of all the data
+The first job runs every minute, it tests the connection and the results are written to a dated log file in folder `/home/pi/monitorNbn/share/output`.
 
-```Bash
-//Reload whole 
-find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name "modemStatus_*.dat" -exec ./dataLoader -f  {} \;
-```
-
-
-## Monitoring Verification
-
-Install MongoDb
-
-Useful commands;
-
-> show dbs
-> use nbn
-> show collections
-> db.DailySummary.find()
-{ "_id" : ObjectId("5ee4dcb4f95e1856923e805c"), "datafile" : "/home/pi/monitorNbn/share/output/modemStatus_20200401.dat", "date" : ISODate("2020-04-01T00:00:00Z"), "outageCount" : 8, "testCount" : 1438 }
-> 
-
-> db.DailySummary.find( { date: { $gt: "2020-06-15" } } ).pretty()
-> db.DailySummary.find( { date: { $gt: "2020-06-15" } } ).sort( { date: 1 })
-> db.DailySummary.find( { testCount: { $lt: 1000 } } ).sort( { date: 1 })
-
-> db.Outage.find( { startTime: { $gte: "2020-06-15", $lt: "2020-06-16"} } ).sort( { startTime: 1 })
-
-
-
-## Deploy application
-
-$ cp /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps
-
-tail -f /var/log/tomcat8/catalina.out
-
-
-<http://ws1:8080>
+The second job runs every day a 6am, it loads data from log  files in folder `/home/pi/monitorNbn/share/output` to the database.
 
 ```Bash
 $ cromtab -e
 
 NBN_HOME=/home/pi/monitorNbn/share
 NBN_DATA=/home/pi/monitorNbn/share/output
-NBN_DATA_LOADER=/home/pi/monitorNbn/share/output
-
-* * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date +\%Y\%m\%d`.dat 2>&1
-
-0 6 * * * ${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NBN_DATA_LOADER}/log/dataLoader.log 2>&1
-
-
-/home/pi/monitorNbn/share/dataLoader/bin/dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> /home/pi/monitorNbn/share/dataLoader/dataLoader.log 2>&1
-
-${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NBN_DATA_LOADER}/log/dataLoader.log 2>&1
-
-dt=$(date --date yesterday "+%a %d/%m/%Y")
+NBN_DATA_LOADER=/home/pi/monitorNbn/share/dataLoader
+#
+# m h  dom mon dow   command
+* * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date$
+0 6 * * * ${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NB$
 ```
 
+#### 3) Monitoring Verification
 
-Deploy to Tomcat
+Once the jobs have been created then check folder `/home/pi/monitorNbn/share/output` that the log files are being created.
+
+The jobs will load the results into the MongoDb database. If required the data can be load manually too. To load for a single day then enter the following command (note change the date to the date you require).
 
 ```Bash
-$ cp -v /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps/ROOT.war
-  378  tail -f /var/log/tomcat8/catalina.out
+$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
 ```
 
+Also all the data can be reloaded with the following.
 
+```Bash
+//Reload whole 
+find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name "modemStatus_*.dat" -exec ./dataLoader -f  {} \;
+```
+
+Also check the database is being populated, here are a few example commands to query the database.
+
+```JavaScript
+> show dbs
+> use nbn
+> show collections
+> db.DailySummary.find()
+{ "_id" : ObjectId("5ee4dcb4f95e1856923e805c"), "datafile" : "/home/pi/monitorNbn/share/output/modemStatus_20200401.dat", "date" : ISODate("2020-04-01T00:00:00Z"), "outageCount" : 8, "testCount" : 1438 }
+> 
+> db.DailySummary.find( { date: { $gt: "2020-06-15" } } ).pretty()
+> db.DailySummary.find( { date: { $gt: "2020-06-15" } } ).sort( { date: 1 })
+> db.DailySummary.find( { testCount: { $lt: 1000 } } ).sort( { date: 1 })
+
+> db.Outage.find( { startTime: { $gte: "2020-06-15", $lt: "2020-06-16"} } ).sort( { startTime: 1 })
+```
+
+#### 4) Deploy application
+
+Finally the deployment of the UI. This is being run under the root context of Tomcat. Upload the `nbnMonitorWar-1.0.war` artefact to `/home/pi/monitorNbn/share` and copy to the Tomcat webapps folder.
+
+```Bash
+$ cp /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps/ROOT.war
+```
+
+The very first the war is deployed the remove the ROOT context that was part of the Tomcat installation. This does not need to be done on subsequent deployments.
 
 ```Bash
 sudo rm -Rf /var/lib/tomcat8/webapps/ROOT
 ```
 
+Then watch the log file for the deployment to complete.
+
+```Bash
+$ tail -f /var/log/tomcat8/catalina.out
+```
+
+Once deployed the application can be accessed via <http://ws1:8080>.
 
