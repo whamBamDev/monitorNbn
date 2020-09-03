@@ -142,7 +142,7 @@ Make the webapps directory writeable ready for deployments.
 ```Bash
 $ sudo chmod a+w /var/lib/tomcat8/webapps
 ```
-  
+
 ## Configure Development Environment
 
 #### 1) Software
@@ -211,7 +211,9 @@ $ cd nbnMonitorWar
 $ gradle assemble --continuous
 ```
 
-Then the ui can be accessed via url <http://localhost:8080>
+Then the UI can be accessed via url <http://localhost:8080>
+
+Another couple of useful urls are <http://localhost:8080/api/dailySummary> and <http://localhost:8080/api/outage?date=2020-07-04>, they are examples of accessing the API used by the UI
 
 Cargo is used for deploying under Tomcat. To run then submit the following. 
 
@@ -232,13 +234,34 @@ $ gradle cargoRedeployLocal
 
 
 
+## Deployment on Raspberry Pi
+
+## Upload Code
+
+Create Folders
 
 
+## Cron Jobs
 
-----
+{
+
+Manual load of data.
+
+```Bash
+$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
+```
+
+Manual load of all the data
+
+```Bash
+//Reload whole 
+find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name "modemStatus_*.dat" -exec ./dataLoader -f  {} \;
+```
 
 
-4) Install MongoDb
+## Monitoring Verification
+
+Install MongoDb
 
 Useful commands;
 
@@ -255,31 +278,18 @@ Useful commands;
 
 > db.Outage.find( { startTime: { $gte: "2020-06-15", $lt: "2020-06-16"} } ).sort( { startTime: 1 })
 
-"startTime" : "2020-06-13T08:35:01"
 
 
-$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
-
-//Reload whole 
-find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name "modemStatus_*.dat" -exec ./dataLoader -f  {} \;
-
-
-
-
-Deploy application
+## Deploy application
 
 $ cp /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps
 
 tail -f /var/log/tomcat8/catalina.out
 
-http://localhost:8080/nbnMonitor
-http://localhost:8080/nbnMonitor/api/dailySummary
-http://localhost:8080/nbnMonitor/api/outage?date=2020-07-04
 
-http://ws1:8080/nbnMonitorWar-1.0/
+<http://ws1:8080>
 
-7) 
-
+```Bash
 $ cromtab -e
 
 NBN_HOME=/home/pi/monitorNbn/share
@@ -296,19 +306,20 @@ NBN_DATA_LOADER=/home/pi/monitorNbn/share/output
 ${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NBN_DATA_LOADER}/log/dataLoader.log 2>&1
 
 dt=$(date --date yesterday "+%a %d/%m/%Y")
+```
 
-$ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
+
+Deploy to Tomcat
+
+```Bash
+$ cp -v /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps/ROOT.war
+  378  tail -f /var/log/tomcat8/catalina.out
+```
 
 
-8) deploy to Tomcat
 
+```Bash
 sudo rm -Rf /var/lib/tomcat8/webapps/ROOT
+```
 
- cp -v /home/pi/monitorNbn/share/nbnMonitorWar-1.0.war /var/lib/tomcat8/webapps/ROOT.war
-  378  tail -f /var/log/tomcat8/catalina.out
-  378  tail -f /var/log/tomcat8/catalina.out
-
-
-
-Server at localhost:27017 reports wire version 0, but this version of the driver requires at least 2 (MongoDB 2.6).
 
