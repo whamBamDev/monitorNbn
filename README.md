@@ -145,9 +145,9 @@ $ sudo chmod a+w /var/lib/tomcat8/webapps
   
 ## Configure Development Environment
 
-#### 1) Installs
+#### 1) Software
 
-Install the following;
+Install the following applications;
 * Virtual Box
 * Vagrant
 
@@ -168,7 +168,7 @@ Under D:\Dev\monitorNbn\monitorNbn\vagrantDevBox copy file localConfig.rb.exampl
 Edit and update the directory parameter to development area.
    HOST_DEV_DIR = 'D:/Dev/monitorNbn'
 
-#### 4)
+#### 4) New Folders
 
 Create the following folders;
 * `D:\Dev\monitorNbn\installDownload`
@@ -186,24 +186,48 @@ Then create and start the VM
 $ vagrant up
 ```
 
+#### 7) Building
 
-#### 7) Build
+[Gradle](https://gradle.org/) is the tool used for building, to build all the modules in the project the issue a 'build' task from the master folder.
 
-Build
+```Bash
+$ cd master
+$ gradle clean build
+```
 
+For developing the ui (the nbnonitorWar module) the application can be run as a Spring Boot application or deployed under Tomcat. For development then it is quickest to use Spring Boot as running with DevTools. Tomcat is used as a final test before deploying onto the Rapsberry Pi.
+
+So to run under Spring Boot then pen two command line windows. In the first window run Spring Boot.
+
+```Bash
+$ cd nbnMonitorWar
 $ gradle -x test bootRun
+```
 
-$ gradle -x test assemble --continuous
+In the second window then run a continuous build, this will auto deploy changes allowing for instant testing.
 
-http://localhost:8080
+```Bash
+$ cd nbnMonitorWar
+$ gradle assemble --continuous
+```
 
+Then the ui can be accessed via url <http://localhost:8080>
 
+Cargo is used for deploying under Tomcat. To run then submit the following. 
+
+```Bash
+$ cd nbnMonitorWar
 $ gradle cargoStartLocal
-$ tail -50f build/output.log
+$ tail -100f build/output.log
+```
 
-http://localhost:8080/nbnMonitor/
+Then the ui can be accessed via url <http://localhost:8080/nbnMonitor/>
 
+To re-deploy the issue the following command.
+
+```Bash
 $ gradle cargoRedeployLocal
+```
 
 
 
