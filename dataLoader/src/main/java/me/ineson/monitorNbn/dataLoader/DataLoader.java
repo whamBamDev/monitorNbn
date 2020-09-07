@@ -34,7 +34,7 @@ public class DataLoader {
 
 	private static final String OPTTON_DATAFILE = "f";
 
-	private static final String OPTTON_TRUNCATE = "t"; 
+	private static final String OPTTON_WIPE = "w"; 
 
 	private static final String OPTTON_TAIL = "t"; 
 
@@ -57,9 +57,9 @@ public class DataLoader {
         		.desc( "The data file to be loaded into the database")
         		.hasArg()
         		.build());
-        options.addOption( Option.builder( OPTTON_TRUNCATE)
-        		.longOpt( "truncate")
-        		.desc( "Truncate the ALL existing data in the database")
+        options.addOption( Option.builder( OPTTON_WIPE)
+        		.longOpt( "wipe")
+        		.desc( "Wipe the ALL existing data from the database")
         		.build());
         options.addOption( Option.builder( OPTTON_TAIL)
         		.longOpt("tail")
@@ -85,13 +85,12 @@ public class DataLoader {
 	        	final DailySummaryDao dailySummaryDao = new DailySummaryDao(datasourceManager.getDatabase());
 	        	final OutageDao outageDao = new OutageDao(datasourceManager.getDatabase());
 
-	        	if(line.hasOption(OPTTON_TRUNCATE)) {
+	        	if(line.hasOption(OPTTON_WIPE)) {
 	        		dailySummaryDao.deleteAll();
 	        		outageDao.deleteAll();
 	        	}
 
-	            //boolean tailFile = line.hasOption(OPTTON_TAIL);
-	            boolean overwrite = line.hasOption(OPTTON_TRUNCATE);
+	            boolean tailFile = line.hasOption(OPTTON_TAIL);
 
 	            String dataFilename = line.getOptionValue(OPTTON_DATAFILE);
 	            File dataFile = new File( dataFilename);
@@ -106,7 +105,7 @@ public class DataLoader {
 	            dataFileParser.setOutageDao(outageDao);
 	            
 	            log.info("About to read data from file: {}", dataFile.getAbsolutePath());
-	            dataFileParser.processFile(dataFile);
+	            dataFileParser.processFile(dataFile, tailFile);
 	        }
 	    
 	    }

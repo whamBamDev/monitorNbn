@@ -34,7 +34,6 @@
     File: 
     <span th:if="${!consoleLogExists}"  th:text="${dailySummary.datafile}"></span> 
     <a th:if="${consoleLogExists}" th:href="@{outage/file(date=${date})}"><span th:text="${dailySummary.datafile}"></span></a> 
-    
   </p>
   <p th:text="'Number of Outages: ' + ${dailySummary.outageCount}"/>
   <p th:text="'Number of tests perfomed: ' + ${dailySummary.testCount} "/>
@@ -297,7 +296,7 @@
               formatter: durationFormatter, formatterParams:{
             	  inputMultiplier: 1000,	  
             	  humanizeParams: { round: true },
-                  invalidPlaceholder:"(invalid duration)"}},
+                  invalidPlaceholder:"Ongoing"}},
           {title:"View log", field:"image", hozAlign:"center", formatter:"image", formatterParams:{
         	    height:"25px",
         	    width:"20px"
