@@ -166,7 +166,9 @@ $ vagrant plugin install vagrant-vbguest
 
 Under D:\Dev\monitorNbn\monitorNbn\vagrantDevBox copy file localConfig.rb.example to localConfig.rb.
 Edit and update the directory parameter to development area.
-   HOST_DEV_DIR = 'D:/Dev/monitorNbn'
+```
+HOST_DEV_DIR = 'D:/Dev/monitorNbn'
+```
 
 #### 4) New Folders
 
@@ -176,8 +178,7 @@ Create the following folders;
 
 #### 5) Java install
 Download Oracle JDK version 8u241 (Linux x64 RPM - filebname jdk-8u241-linux-x64.rpm) and put under 
-D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to download Java8 using from within a vagrant script 
-(was done using wget).
+D:\Dev\monitorNbn\installDownload. Unfortunatly it is no longer possible to download Java8 using from within a vagrant script (was done using wget).
 
 #### 6) Start VM
 
@@ -249,22 +250,25 @@ The first artefact to deploy is `dataLoader-1.0.zip`, upload to `/home/pi/monito
 
 #### 2) Cron Jobs
 
-To start monitoring and saving the data to the database then add the following two cron jobs.
+To start monitoring and saving the data to the database then add the following three cron jobs.
 
 The first job runs every minute, it tests the connection and the results are written to a dated log file in folder `/home/pi/monitorNbn/share/output`.
 
-The second job runs every day a 6am, it loads data from log  files in folder `/home/pi/monitorNbn/share/output` to the database.
+The second job runs every day a 4am, it tails the days data file (in folder `/home/pi/monitorNbn/share/output`) and adds the results to the database as soon as the are written.
+
+The third job runs every day a 4am, it loads data from log  files in folder `/home/pi/monitorNbn/share/output` to the database. This job loads data from the previous day, it's a backup for the 2nd job just in case it fails during the day.
 
 ```Bash
-$ cromtab -e
+$ crontab -e
 
 NBN_HOME=/home/pi/monitorNbn/share
 NBN_DATA=/home/pi/monitorNbn/share/output
 NBN_DATA_LOADER=/home/pi/monitorNbn/share/dataLoader
 #
 # m h  dom mon dow   command
-* * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date$
-0 6 * * * ${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NB$
+* * * * * flock -w 10 ${NBN_DATA}/modemStatus.lock ${NBN_HOME}/monitorNbnConnection.sh >> ${NBN_DATA}/modemStatus_`date +\%Y\%m\%d`.dat 2>&1
+5 0 * * * ${NBN_DATA_LOADER}/bin/dataLoader -t -f ${NBN_DATA}/modemStatus_`date +\%Y\%m\%d`.dat >> ${NBN_DATA_LOADER}/log/dataLoaderTail.log 2>&1
+0 4 * * * ${NBN_DATA_LOADER}/bin/dataLoader -f ${NBN_DATA}/modemStatus_`date --date yesterday "+\%Y\%m\%d"`.dat >> ${NBN_DATA_LOADER}/log/dataLoader.log 2>&1
 ```
 
 #### 3) Monitoring Verification
@@ -277,10 +281,9 @@ The jobs will load the results into the MongoDb database. If required the data c
 $ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
 ```
 
-Also all the data can be reloaded with the following.
+Also data from all the files can be reloaded with the following.
 
 ```Bash
-//Reload whole 
 find  /home/pi/monitorNbn/share/output -not \( -path **/backup/* -prune \) -name "modemStatus_*.dat" -exec ./dataLoader -f  {} \;
 ```
 

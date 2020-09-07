@@ -30,11 +30,11 @@ public class DataFileParser {
 
 	private OutageDao outageDao;
 	
-	public void processFile( File dataFile) throws IOException {
+	public void processFile( File dataFile, boolean tailFile) throws IOException {
 
 		//Get date for file/check DB has stats.
 		//save, date, number of failures
-        try (FileReader reader = new FileReader(dataFile)) { 
+        try (FileReader reader = new FileReader(dataFile, tailFile)) { 
             DailySummary dailySummary = null;
             Outage outage = null;
             int outageFirstLineNumber = 0;
@@ -76,6 +76,9 @@ public class DataFileParser {
                 }
 
                 dailySummary.setTestCount(dailySummary.getTestCount().intValue() + 1);
+                if (tailFile) {
+                    dailySummaryDao.update(dailySummary);
+                }
 
                 if( !testSuccessful.isTestSuccessful()) {
                     dailySummary.setFailedTestCount(dailySummary.getFailedTestCount().intValue() + 1);
