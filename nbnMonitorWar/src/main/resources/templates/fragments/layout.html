@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:fragment="headerfiles">
+    <meta charset="UTF-8" />
+
+    <div th:fragment="assetsHead" th:remove="tag">
+
+      <script th:src="@{webjars/jquery/jquery.min.js}"></script>
+    
+      <!--  Polyfills required for tabulator to run under IE11 -->
+      <script th:src="@{webjars/promise-polyfill/dist/polyfill.min.js}"></script>
+      <script th:src="@{webjars/whatwg-fetch/dist/fetch.umd.js}"></script>
+      <script th:src="@{webjars/moment/min/moment.min.js}"></script>
+      <script th:src="@{webjars/chart.js/2.9.3/dist/Chart.min.js}"></script>
+      <script th:src="@{external/humanizeDuration/3.23.1/humanizeDuration.js}"></script>
+
+      <link th:href="@{webjars/startbootstrap-sb-admin-2/vendor/fontawesome-free/css/all.css}" rel="stylesheet" />
+      <link th:href="@{external/fonts.googleapis.css}" rel="stylesheet" />
+      <link th:href="@{webjars/startbootstrap-sb-admin-2/css/sb-admin-2.css}" rel="stylesheet" />
+      <link th:href="@{webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
+      <link th:href="@{webjars/datatables/css/dataTables.bootstrap4.css}" rel="stylesheet" />
+
+      <script th:src="@{webjars/sockjs-client/sockjs.min.js}"></script>
+      <script th:src="@{webjars/stompjs/lib/stomp.min.js}"></script>
+
+      <link th:href="@{css/nbnMonitor.css}" rel="stylesheet" />
+      <script th:src="@{js/app.js}"></script>
+
+    </div>
+
+  </head>
+  <body>
+    <div th:fragment="header">
+        <h1>Thymeleaf Fragments sample</h1>
+    </div>
+
+    <div th:fragment="outageInProgress" id="outageInProgressAlert"
+        class="alert alert-danger mt-5 ml-3 mr-3 container fixed-top d-none" style="z-index: 900;" role="alert">
+      <i class="fas fa-exclamation-triangle fa-lg"></i>
+      <span id="outageInProgressMessage">Outage in progress.</span>
+    </div>
+
+    <footer th:fragment="footer" class="sticky-footer bg-white">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>NBN Monitor. Version:</span>
+          <span th:text="${@environment.getProperty('application.version') + ','}">0.0</span>
+          <span>build timestamp:</span>
+          <span th:text="${@environment.getProperty('application.buildTimeStamp')}">-</span>
+        </div>
+      </div>
+      
+    </footer>
+
+    <!-- Scroll to Top Button-->
+    <a th:fragment="scrollToTop" class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    
+    <div th:fragment="assetsBodyEnd" th:remove="tag">
+      <script th:src="@{webjars/jquery-ui/jquery-ui.min.js}"></script>
+      <script th:src="@{webjars/tether/js/tether.min.js}"></script>
+      <script th:src="@{webjars/bootstrap/js/bootstrap.min.js}"></script>
+      <script th:src="@{webjars/startbootstrap-sb-admin-2/js/sb-admin-2.js}"></script>
+      <script th:src="@{webjars/datatables/js/jquery.dataTables.min.js}"></script>
+      <script th:src="@{webjars/datatables/1.10.21/js/dataTables.bootstrap4.min.js}"></script>
+    </div>
+  </body>
+</html>    

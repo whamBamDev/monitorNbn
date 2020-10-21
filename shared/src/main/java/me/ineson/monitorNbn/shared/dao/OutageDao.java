@@ -7,6 +7,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -94,6 +95,17 @@ public class OutageDao {
         return createCollection()
         		.find(Filters.and(Filters.gte(KEY_FIELD, startTime), Filters.lt(KEY_FIELD, startTime.plusDays(1L))))
         		.sort(Sorts.orderBy(Sorts.ascending(KEY_FIELD)));
+	}
+
+	public Outage findLatestForDate(LocalDate date) {
+		LocalDateTime startTime = date.atStartOfDay();
+        Iterator<Outage>iterator = createCollection()
+        		.find(Filters.and(Filters.gte(KEY_FIELD, startTime), Filters.lt(KEY_FIELD, startTime.plusDays(1L))))
+        		.sort(Sorts.orderBy(Sorts.descending(KEY_FIELD)))
+        		.limit(1)
+        		.iterator();
+        
+        return iterator.hasNext() ? iterator.next() : null;
 	}
 
     public Iterable<Outage> findAll() {

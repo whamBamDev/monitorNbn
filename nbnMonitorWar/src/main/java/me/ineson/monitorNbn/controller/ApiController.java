@@ -7,6 +7,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,9 +57,28 @@ public class ApiController {
 		if( Objects.isNull(endDate)) {
 			endDate = LocalDate.now();
         }
-		
+
         LOG.info("Getting daily summary date from {} to {}", startDate, endDate);
-        return dailySummaryDao.findByDateRange(startDate, endDate);
+        Iterable<DailySummary> results = dailySummaryDao.findByDateRange(startDate, endDate);
+        
+        LocalDate today = LocalDate.now();
+        if( today.equals(startDate)
+        		|| today.equals(endDate)
+        		|| (today.isAfter(startDate) && today.isBefore(endDate))) {
+        	Iterator<DailySummary>resultsIterator = results.iterator();
+        	DailySummary firstDailySummary = resultsIterator.hasNext() ? resultsIterator.next() : null;
+
+        	if( Objects.isNull(firstDailySummary)
+        		|| Objects.isNull(firstDailySummary.getDate())
+        		|| today.isAfter(firstDailySummary.getDate())) {
+        		List<DailySummary>updatedResults = new ArrayList<>();
+        		updatedResults.add(dailySummaryService.createDummyDailySummary());
+        		results.forEach(updatedResults::add);
+        		results = updatedResults;
+       		}
+        }
+
+        return results;
 	}
 
 	@GetMapping("/outage")

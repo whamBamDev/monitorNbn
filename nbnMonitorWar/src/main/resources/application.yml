@@ -1,10 +1,17 @@
+application:
+    version: ${version}
+    buildTimeStamp: ${buildTimeStamp}
 mongoDb:
     url: mongodb://ws1:27017
 ---
 spring:
     profiles: dev
+application:
+    version: DevBuild
+    buildTimeStamp: Current Time
 mongoDb:
-    url: mongodb://ws1:27017
+    url: mongodb://localhost:28017
+#    url: mongodb://ws1:27017
 dataFileRoot: D:/Dev/nbnMonitor/share/output
 ---
 spring:
