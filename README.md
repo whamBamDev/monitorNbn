@@ -281,6 +281,12 @@ The jobs will load the results into the MongoDb database. If required the data c
 $ ./dataLoader -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
 ```
 
+An example of specifying an url.
+
+```Bash
+$ ./dataLoader -u mongodb://localhost:28017 -f /home/pi/monitorNbn/share/output/modemStatus_20200401.dat
+```
+
 Also data from all the files can be reloaded with the following.
 
 ```Bash
