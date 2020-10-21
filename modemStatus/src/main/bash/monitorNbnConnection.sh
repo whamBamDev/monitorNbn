@@ -18,15 +18,15 @@ echo ""
 
 time_now=$(date +"%d-%m-%Y %T")
 echo "== ping - DNS Lookup: ${time_now}"
-echo "ping www.telstra.com.au -4 -c 1"
-ping www.telstra.com.au -4 -c 1
+echo "ping www.telstra.com.au -4 -c 3"
+ping www.telstra.com.au -4 -c 3
 echo "Exit Code: $?"
 echo ""
 
 time_now=$(date +"%d-%m-%Y %T")
 echo "== ping - DNS Lookup: ${time_now}"
-echo "ping www.telstra.com.au -c 1"
-ping www.telstra.com.au -c 1
+echo "ping www.telstra.com.au -c 3"
+ping www.telstra.com.au -c 3
 echo "Exit Code: $?"
 echo ""
 
