@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 allprojects {
     apply plugin: 'java'
 
@@ -51,3 +53,9 @@ subprojects {
 	
 }
 
+def root = project.rootProject
+if (!root.hasProperty("startTime")) {
+	Date today = new Date ()
+	SimpleDateFormat df = new SimpleDateFormat ("dd-MMM-yyyy hh:mm:ss")
+	ext.startTime = df.format (today)
+}
