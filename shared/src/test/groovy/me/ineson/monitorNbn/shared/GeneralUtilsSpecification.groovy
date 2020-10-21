@@ -13,7 +13,7 @@ class GeneralUtilsSpecification extends Specification {
 		where:
 			searchString |  testLines                                 | expectedResult
 			null         |  null                                      | false
-			"aa"         |  null                                      | false
+			"aa3"        |  null                                      | false
 			null         |  [ "str" ]                                 | false
 			"aa"         |  [ "aa bb" ]                               | true
 			"bb"         |  [ "aa bb" ]                               | false

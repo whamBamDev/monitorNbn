@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Set;
@@ -331,6 +332,65 @@ class OutageDaoTest {
         assertTrue("Has a result", searchResults.iterator().hasNext());
     }
 
+
+    @Test
+    @DisplayName("Test findLatestForDate success")
+    void testfindLatestForDateSuccess() {
+
+        // Given: Save a couple of records on the same date.
+        Outage outage = new Outage();
+        LocalDateTime startTime = LocalDate.now().atTime(1, 22, 21);
+        outage.setNumberOfLines(25);
+        outage.setStartFilePosition(12345L);
+        outage.setStartTime(startTime);
+        outage.setEndTime(startTime.plusHours(1));
+        dao.add(outage);
+
+        outage = new Outage();
+        outage.setNumberOfLines(1);
+        outage.setStartFilePosition(5L);
+        outage.setStartTime(startTime.plusHours(4));
+        outage.setEndTime(startTime.plusHours(5));
+        dao.add(outage);
+
+        // When: Find by the date of the latest for the day.
+        Outage searchResult = dao.findLatestForDate(startTime.toLocalDate());
+
+        // Then: Record is returned
+        assertNotNull(searchResult);
+
+        // and the return record is the first one that was saved.
+        LOG.debug("returnedOutage: {}", searchResult);
+        assertEquals(Integer.valueOf(1), searchResult.getNumberOfLines());
+    }
+    
+    @Test
+    @DisplayName("Test findLatestForDate not found")
+    void testfindLatestForDateNotFoundReturnsNull() {
+
+        // Given: Save a couple of records on the same date.
+        Outage outage = new Outage();
+        LocalDateTime startTime = LocalDate.now().atTime(1, 22, 21);
+        outage.setNumberOfLines(25);
+        outage.setStartFilePosition(12345L);
+        outage.setStartTime(startTime);
+        outage.setEndTime(startTime.plusHours(1));
+        dao.add(outage);
+
+        outage = new Outage();
+        outage.setNumberOfLines(1);
+        outage.setStartFilePosition(5L);
+        outage.setStartTime(startTime.plusHours(4));
+        outage.setEndTime(startTime.plusHours(5));
+        dao.add(outage);
+
+        // When: Find by the date of the latest for the day.
+        Outage searchResult = dao.findLatestForDate(startTime.toLocalDate().plusDays(1));
+
+        // Then: Record is returned
+        assertNull(searchResult);
+    }
+    
 	@Test
 	@DisplayName("Test deleteAll success")
 	void testDeleteAllSuccess() {
