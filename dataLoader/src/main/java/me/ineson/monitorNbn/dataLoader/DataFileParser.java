@@ -48,6 +48,7 @@ public class DataFileParser {
     				}
 
                     if( Objects.nonNull(outage)) {
+                        outage.setInProgress(null);
                         outageDao.update(outage);
 			        }
 
@@ -83,7 +84,6 @@ public class DataFileParser {
                 if( !testSuccessful.isTestSuccessful()) {
                     dailySummary.setFailedTestCount(dailySummary.getFailedTestCount().intValue() + 1);
                 	
-
                 	if(Objects.isNull(outage)) {
                         outageFirstLineNumber = section.getFirstLineNumber();
 
@@ -91,6 +91,7 @@ public class DataFileParser {
                         outage.setStartTime(testSuccessful.getStartTime());
                         outage.setEndTime(testSuccessful.getEndTime());
                         outage.setStartFilePosition(section.getFilePosition());
+                        outage.setInProgress(Boolean.TRUE);
                     
                         outage.setNumberOfLines(section.getLastLineNumber() - outageFirstLineNumber + 1);
                     
@@ -101,10 +102,11 @@ public class DataFileParser {
                         dailySummaryDao.update(dailySummary);
     				}
 
-                    outage.setNumberOfLines(section.getLastLineNumber() - outageFirstLineNumber);
+                    outage.setNumberOfLines(section.getLastLineNumber() - outageFirstLineNumber + 1);
                     outage.setEndTime(testSuccessful.getEndTime());
                 
                 } else if(Objects.nonNull(outage)) {
+                    outage.setInProgress(null);
                     outageDao.update(outage);
                     outage = null;
                     outageFirstLineNumber = 0;

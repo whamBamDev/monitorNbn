@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jline.internal.Log;
 import me.ineson.monitorNbn.shared.dao.DailySummaryDao;
 import me.ineson.monitorNbn.shared.dao.DatasourceManager;
 import me.ineson.monitorNbn.shared.dao.OutageDao;
@@ -68,6 +69,7 @@ public class DataLoader {
         options.addOption( Option.builder(OPTTON_DATABASE_URI)
         		.longOpt("uri")
         		.desc("The URI to the mongoDB database, e.g. something like mongodb://username:password@localhost:27017")
+        		.hasArg()
         		.build());
 		
 	    // create the parser
@@ -81,6 +83,7 @@ public class DataLoader {
 	        	formatter.printHelp( "DataLoader", options );
 	        } else {
 	        	final String url = line.getOptionValue(OPTTON_DATABASE_URI);
+	        	Log.info("URI = " + url);
 	        	final DatasourceManager datasourceManager = StringUtils.isBlank(url) ? new DatasourceManager() : new DatasourceManager(url);
 	        	final DailySummaryDao dailySummaryDao = new DailySummaryDao(datasourceManager.getDatabase());
 	        	final OutageDao outageDao = new OutageDao(datasourceManager.getDatabase());
