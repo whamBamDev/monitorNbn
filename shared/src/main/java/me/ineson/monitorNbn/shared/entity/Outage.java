@@ -12,6 +12,8 @@ public class Outage extends BaseEntity {
     
     private Integer numberOfLines;
 
+    private Boolean inProgress;
+
 	public LocalDateTime getStartTime() {
 		return startTime;
 	}
@@ -45,7 +47,15 @@ public class Outage extends BaseEntity {
     }
 
 	
-    @Override
+    public Boolean getInProgress() {
+		return inProgress;
+	}
+
+	public void setInProgress(Boolean inProgress) {
+		this.inProgress = inProgress;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Outage [id=").append(getId())
@@ -53,6 +63,7 @@ public class Outage extends BaseEntity {
 				.append(", endTime=").append(endTime)
 				.append(", startFilePosition=").append(startFilePosition)
 				.append(", numberOfLines=").append(numberOfLines)
+				.append(", inProgress=").append(inProgress)
 				.append("]");
 		return builder.toString();
 	}
