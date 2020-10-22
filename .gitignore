@@ -12,3 +12,6 @@
 # Vagrant files
 **/localConfig.rb
 **/.vagrant
+
+#misc
+README.md.backup

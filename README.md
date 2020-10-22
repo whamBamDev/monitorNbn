@@ -5,7 +5,7 @@ Application for the monitoring of Internet/WAN connections checking the connecti
 
 ## Solution
 
-The hardware being used for this an old Raspberry Pi I have lying about. Connected directly to the Telstra Smart Modem using Ethernet.
+The hardware being used for this an old Raspberry Pi I have lying about (note that any *nix will do). Connected directly to the Telstra Smart Modem using Ethernet.
 
 ![Hardware](doco/hardwareSetup.png)
 
