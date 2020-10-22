@@ -10,8 +10,8 @@ application:
     version: DevBuild
     buildTimeStamp: Current Time
 mongoDb:
-    url: mongodb://localhost:28017
-#    url: mongodb://ws1:27017
+#    url: mongodb://localhost:28017
+    url: mongodb://ws1:27017
 dataFileRoot: D:/Dev/nbnMonitor/share/output
 ---
 spring:
