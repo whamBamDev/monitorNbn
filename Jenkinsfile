@@ -2,6 +2,7 @@ pipeline {
   agent {
     docker {
       image 'gradle:jdk8'
+      args '-v $HOME/.gradle:/root/.gradle'
     }
 
   }
@@ -14,7 +15,9 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh '''cd naster
+        sh '''
+ls -l
+cd master
 gradle build'''
       }
     }
