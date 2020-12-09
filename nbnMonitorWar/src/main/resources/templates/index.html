@@ -124,13 +124,15 @@
       });
     });
     
-    var outageDateFrom = moment().subtract(1, 'months');
-    var outageDateTo = moment(); 
-
     function initialisePage() {
       createChartContext();
     	
+      var outageDates = {
+    	from: moment().subtract(1, 'months'),
+    	to: moment()
+      };
       var todayDateStr = sessionStorage.getItem("todayDate");
+      console.log("session todayDateStr",todayDateStr);
       if( ! todayDateStr || todayDateStr === "") {
     	  todayDateStr = moment().format(UI_DATE_FORMAT);
     	  sessionStorage.setItem("todayDate", todayDateStr)
@@ -143,19 +145,20 @@
       if(outageDateFromStr && outageDateFromStr != "") {
         var date = moment(outageDateFromStr,UI_DATE_FORMAT);
         if( date.isValid()) {
-          outageDateFrom = date;
+          outageDates.from = date;
         }
       }
       if(outageDateToStr && outageDateToStr != "") {
         var date = moment(outageDateToStr,UI_DATE_FORMAT);
         if( date.isValid()) {
-          outageDateTo = date;
+          outageDates.to = date;
         }
       }
 
-      getDailySummaryData( outageDateFrom, outageDateTo);
-      
-      createDateRangePicker( outageDateFrom, outageDateTo);
+      outageDates = shiftDates(outageDates.from, outageDates.to);
+
+      getDailySummaryData( outageDates.from, outageDates.to);
+      createDateRangePicker( outageDates.from, outageDates.to);
 
       setInterval(checkDateRange, 60000)
     }

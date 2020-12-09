@@ -5,33 +5,52 @@ var dailySummaryTable;
 var picker;
 
 
-function checkDateRange() {
+function shiftDates(fromDate, toDate) {
+  var dates = {
+    from: fromDate,
+    to: toDate,
+    shifted: false
+  };
+
   var today = moment().format(UI_DATE_FORMAT);
   var savedToday = sessionStorage.getItem("todayDate");
-  var fromDate = $("#outageDateFrom").val();
-  var toDate = $("#outageDateTo").val();
 
+console.log("session(shift) savedToday",savedToday, "today", today, "dates", dates);
   if(today != savedToday) {
     sessionStorage.setItem("todayDate", today);
-    if(savedToday && savedToday != "" && savedToday === toDate) {
-      sessionStorage.setItem("todayDate", today);
+    toDateStr = toDate.format(UI_DATE_FORMAT);
+console.log("savedToday",savedToday,"toDateStr",toDateStr);
+    if(savedToday && savedToday != "" && savedToday === toDateStr) {
       var daysDiff = 31;
       if(fromDate && fromDate != "") {
-        daysDiff = moment(toDate, UI_DATE_FORMAT).diff(moment(fromDate, UI_DATE_FORMAT), "days");
+        daysDiff = toDate.diff(fromDate, "days");
       }
+console.log("daysDiff",daysDiff);
       
-      toDate = today;
-      fromDate = moment().subtract(daysDiff,"days").format(UI_DATE_FORMAT);
-
-      $("#outageDateFrom").val(fromDate);
-      $("#outageDateTo").val(toDate);
-
-      getDailySummaryData( moment(fromDate, UI_DATE_FORMAT), moment(toDate, UI_DATE_FORMAT));
-    } else {
-      // TODO: unsubscribe from topic?
+      dates.to = moment();
+      dates.from = moment().subtract(daysDiff,"days");
+      dates.shifted = true;
     }
   }
 
+console.log("dates",dates);
+  
+  return dates;
+}
+
+function checkDateRange() {
+  var fromDate = moment( $("#outageDateFrom").val(), UI_DATE_FORMAT);
+  var toDate = moment( $("#outageDateTo").val(), UI_DATE_FORMAT);
+
+  var dates = shiftDates(fromDate, toDate);
+
+  if(dates.shifted) {
+
+    $("#outageDateFrom").val(dates.from.format(UI_DATE_FORMAT));
+    $("#outageDateTo").val(dates.to.format(UI_DATE_FORMAT));
+
+    getDailySummaryData( dates.from, dates.to);
+  }
 }
 
 

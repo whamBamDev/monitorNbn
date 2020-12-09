@@ -1,5 +1,9 @@
 import java.text.SimpleDateFormat
 
+plugins {
+	id "org.sonarqube" version "3.0" apply false
+}
+
 allprojects {
     apply plugin: 'java'
 
@@ -21,6 +25,7 @@ ext.springBootVersion = '2.1.10.RELEASE'
 subprojects {
 	apply plugin: 'groovy'
 	apply plugin: 'jacoco'
+	apply plugin: 'org.sonarqube'
 	
 	dependencies {
         implementation 'org.apache.commons:commons-lang3:3.10'

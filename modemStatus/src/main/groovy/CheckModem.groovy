@@ -1,9 +1,10 @@
-import static me.ineson.monitorNbn.modemStatus.CheckModemOutput.parseHtml as checkModem
+import static me.ineson.monitor_nbn.modem_status.CheckModemOutput.parseHtml as checkModem
+import static me.ineson.monitor_nbn.modem_status.CheckModemOutput.parseHtml
 
 import java.io.InputStream
 import java.net.URL
 
-import me.ineson.monitorNbn.modemStatus.ModemStatus
+import me.ineson.monitor_nbn.modem_status.ModemStatus
 
 
 def retryAttempts = 3;

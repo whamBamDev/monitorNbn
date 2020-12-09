@@ -11,7 +11,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'me.ineson.monitorNbn.dataLoader.DataLoader'
+    mainClassName = 'me.ineson.monitor_nbn.data_loader.DataLoader'
 }
 
 
