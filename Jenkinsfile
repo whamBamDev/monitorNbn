@@ -24,6 +24,8 @@ gradle clean build'''
       steps {
         junit(allowEmptyResults: true, testResults: '**/build/test-results/test/*.xml')
         jacoco(execPattern: '**/**.exec', classPattern: '**/classes', sourcePattern: '**/src/main/java', sourceInclusionPattern: '**/*.java,**/*.groovy,**/*.kt,**/*.kts')
+        sh '''cd master
+gradle sonarqube'''
       }
     }
 
