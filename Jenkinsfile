@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'gradle:jdk8'
-      args '-v $HOME/.gradle:/root/.gradle'
+      args '-v $HOME/.gradle:/home/gradle/.gradle'
     }
 
   }
