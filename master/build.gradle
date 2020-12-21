@@ -7,7 +7,7 @@ plugins {
 allprojects {
     apply plugin: 'java'
 
-    group = 'me.ineson.monitorNbn'
+    group = 'me.ineson.monitor_nbn'
     version = '1.0'
 
     repositories {
@@ -49,13 +49,17 @@ subprojects {
 	
     jacocoTestReport {
         reports {
-            xml.enabled false
+            xml.enabled true
             csv.enabled false
             html.destination file("${buildDir}/jacocoHtml")
         }
     }
 	
-	
+    sonarqube {
+        properties {
+            property "sonar.projectName", "monitorNbn - ${project.name}"
+        }
+	}
 }
 
 def root = project.rootProject
