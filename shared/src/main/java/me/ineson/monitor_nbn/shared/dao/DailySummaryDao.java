@@ -30,9 +30,9 @@ public class DailySummaryDao {
 
     private static final Logger LOG = LogManager.getLogger(DailySummaryDao.class);
 
-    final static String COLLECTION_NAME = DailySummary.class.getSimpleName();
+    static final String COLLECTION_NAME = DailySummary.class.getSimpleName();
 
-    final static String KEY_FIELD = "date";
+    static final String KEY_FIELD = "date";
 
 	private MongoDatabase mongoDatabase;
 
