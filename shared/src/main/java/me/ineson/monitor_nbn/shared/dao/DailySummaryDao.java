@@ -30,7 +30,7 @@ public class DailySummaryDao {
 
     private static final Logger LOG = LogManager.getLogger(DailySummaryDao.class);
 
-    final static String COLLECTION_NAME = DailySummary.class.getSimpleName();;
+    final static String COLLECTION_NAME = DailySummary.class.getSimpleName();
 
     final static String KEY_FIELD = "date";
 
