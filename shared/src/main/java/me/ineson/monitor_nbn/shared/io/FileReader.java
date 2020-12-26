@@ -95,7 +95,7 @@ public class FileReader implements Closeable {
 	}
 
     public List<String> getLines(int count) throws IOException {
-        List<String> lines = new ArrayList<String>(count);
+        List<String> lines = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             lines.add(getLine());
         }
@@ -120,7 +120,7 @@ public class FileReader implements Closeable {
     }
 
     private final String readLineFromFile() throws IOException {
-        StringBuffer input = new StringBuffer();
+    	StringBuilder input = new StringBuilder();
         int c = -1;
         boolean eol = false;
         
