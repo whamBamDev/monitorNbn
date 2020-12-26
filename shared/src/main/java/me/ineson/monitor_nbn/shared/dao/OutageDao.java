@@ -32,9 +32,9 @@ public class OutageDao {
 
     private static final Logger LOG = LogManager.getLogger(OutageDao.class);
 
-    final static String COLLECTION_NAME = Outage.class.getSimpleName();;
+    static final String COLLECTION_NAME = Outage.class.getSimpleName();
 
-    final static String KEY_FIELD = "startTime";
+    static final String KEY_FIELD = "startTime";
 
     private MongoDatabase mongoDatabase;
 
