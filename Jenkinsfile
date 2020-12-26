@@ -26,6 +26,7 @@ gradle -i clean build'''
         jacoco(execPattern: '**/**.exec', classPattern: '**/classes', sourcePattern: '**/src/main/java', sourceInclusionPattern: '**/*.java,**/*.groovy,**/*.kt,**/*.kts')
         sh '''cd master
 gradle sonarqube'''
+        recordIssues(aggregatingResults: true)
       }
     }
 
