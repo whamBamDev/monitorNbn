@@ -31,7 +31,7 @@ subprojects {
 
 		codenarc {
 			configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
-			reportFormat = 'html'
+			reportFormat = 'xml'
 			ignoreFailures = true
 		}
 	
