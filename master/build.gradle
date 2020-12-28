@@ -74,6 +74,7 @@ subprojects {
     sonarqube {
         properties {
             property "sonar.projectName", "monitorNbn - ${project.name}"
+			property "sonar.sources", "src/main"
         }
 	}
 }
